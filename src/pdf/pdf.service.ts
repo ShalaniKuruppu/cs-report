@@ -23,6 +23,26 @@ export class PdfService {
     // Generate chart image (base64)
     const chartImage = await generateLineChart(data.monthlyCounts || []);
 
+    Handlebars.registerHelper('uniqueProducts', function (deployments: any[]) {
+      const seen = new Set();
+      const productList: string[] = [];
+    
+      deployments.forEach(env => {
+        (env.products || []).forEach(p => {
+          if (!seen.has(p.name)) {
+            seen.add(p.name);
+            productList.push(p.name);
+          }
+        });
+      });
+    
+      return productList;
+    });
+    
+    Handlebars.registerHelper('eq', function (a, b) {
+      return a === b;
+    });
+    
     // Prepare context data
     const context = {
       ...data.subscriptionDetails,

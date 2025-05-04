@@ -187,22 +187,32 @@
       </tr>
     </table>
   
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #eef3f7;">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #dde6e6;">
       <thead style="background-color: #ff7300; color: white;">
         <tr>
-          <th style="padding: 12px; font-size: 16px;">Product</th>
-          <th style="padding: 12px; font-size: 16px;">Subscription</th>
-          <th style="padding: 12px; font-size: 16px;">Query Hours</th>
+          <th style="padding: 14px; font-size: 16px;">Product</th>
+          <th style="padding: 14px; font-size: 16px;">Subscription</th>
+          <th style="padding: 14px; font-size: 16px;">Query Hours</th>
         </tr>
       </thead>
       <tbody>
+        {{#each (uniqueProducts projectDeployments) as |productName index|}}
         <tr>
-          <td style="padding: 12px;">All Products</td>
-          <td style="padding: 12px;">${{subscription}}</td>
-          <td style="padding: 12px;">{{totalQueryHours}}<br><span style="font-size: 12px;">({{consumedQueryHours}} Utilized)</span></td>
+          <td style="padding: 12px; font-size: 15px;">{{productName}}</td>
+          <td style="padding: 12px; font-size: 15px;">
+            {{#if (eq index 0)}}${{../subscription}}{{/if}}
+          </td>
+          <td style="padding: 12px; font-size: 15px;">
+            {{#if (eq index 0)}}
+              {{../totalQueryHours}}<br>
+              <span style="font-size: 12px;">({{../consumedQueryHours}} Utilized)</span>
+            {{/if}}
+          </td>
         </tr>
+        {{/each}}
       </tbody>
     </table>
+    
   </div>
   
 
@@ -213,7 +223,7 @@
   </div>
 
   <div class="section">
-    <h2>Deployed Products</h2>
+    <h2 style="color: #ff7300; font-size: 28px;">Subscription Details</h2>
     {{#each projectDeployments}}
       {{#if products.length}}
         <h3>{{name}} Environment</h3>
