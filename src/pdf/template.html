@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Customer Success Report</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .front-page,
+    .sub-topic-page,
+    .records-page,
+    .thank-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 148mm;
+      padding: 20px;
+      box-sizing: border-box;
+      page-break-after: always;
+    }
+
+    .front-page { background-color: #212a32; }
+    .sub-topic-page,
+    .records-page,
+    .thank-page { background-color: #38434d; }
+
+    .agenda-page {
+      padding: 20px;
+      min-height: 148mm;
+      box-sizing: border-box;
+    }
+
+    .front-page h1,
+    .thank-page h1 {
+      font-size: 30px;
+      font-weight: bold;
+      color: white;
+      margin-top: 100px;
+      margin-left: 50px;
+    }
+
+    .front-page p,
+    .thank-page p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffc808;
+      margin-left: 50px;
+    }
+
+    .section-divider {
+      border-top: 2px solid #ff7300;
+      width: 60%;
+      margin: 20px auto;
+    }
+
+    .agenda-page h1 {
+      font-size: 28px;
+      margin: 40px 0 60px 50px;
+      color: #ff7300;
+    }
+
+    .agenda-page ul {
+      list-style-type: none;
+      padding-left: 50px;
+    }
+
+    .agenda-page ul li::before {
+      content: "\2022";
+      color: orange;
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+    }
+
+    .sub-topic-page h1,
+    .records-page h1 {
+      font-size: 30px;
+      font-weight: 600;
+      margin-top: 270px;
+      margin-left: 50px;
+      color: white;
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      min-height: 148mm;
+      padding: 20px;
+      box-sizing: border-box;
+      page-break-after: always;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 10px;
+      background-color: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #455A66;
+      color: white;
+    }
+
+    .chart {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .chart img {
+      width: 190mm;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 50px;
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Front Page -->
+  <div class="front-page">
+    <h1>{{accountName}} - Customer Success Report</h1>
+    <p>Accelerating Success Together</p>
+    <hr class="section-divider" />
+    <p>Generated on: {{generatedDate}}</p>
+  </div>
+
+  <!-- Agenda Page -->
+  <div class="agenda-page">
+    <h1>Table of Contents</h1>
+    <ul>
+      <li>Support Update</li>
+      <li>Current Deployment</li>
+      <li>SLA & Other Information</li>
+      <li>Client Business Overview</li>
+      <li>Notes</li>
+    </ul>
+  </div>
+
+  <!-- Support Update -->
+  <div class="sub-topic-page">
+    <h1>Support Update</h1>
+    <hr class="section-divider" />
+  </div>
+
+  <div class="section">
+    <h2>Subscription Details</h2>
+    <p><strong>Project Key:</strong> {{projectKey}}</p>
+    <p><strong>Support Tier:</strong> {{supportTier}}</p>
+    <p><strong>Subscription:</strong> ${{subscription}}</p>
+    <p><strong>Query Hours:</strong> {{totalQueryHours}} ({{consumedQueryHours}} Utilized)</p>
+  </div>
+
+  <!-- Deployment -->
+  <div class="sub-topic-page">
+    <h1>Current Deployment</h1>
+    <hr class="section-divider" />
+  </div>
+
+  <div class="section">
+    <h2>Deployed Products</h2>
+    {{#each projectDeployments}}
+      {{#if products.length}}
+        <h3>{{name}} Environment</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Version</th>
+              <th>Support Status</th>
+              <th>Support EOL Date</th>
+              <th>Cores</th>
+              <th>TPS</th>
+              <th>Update Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each products}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{version}}</td>
+              <td>{{supportStatus}}</td>
+              <td>{{eolDate}}</td>
+              <td>{{cores}}</td>
+              <td>{{tps}}</td>
+              <td>{{updateLevelInfo}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{/if}}
+    {{/each}}
+  </div>
+
+  <!-- SLA Info -->
+  <div class="sub-topic-page">
+    <h1>SLA & Other Information</h1>
+    <hr class="section-divider" />
+  </div>
+
+  <div class="section">
+    <h2>SLA Report</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>SLA Definition</th>
+          <th>Business Elapsed %</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each slaRecords}}
+        <tr>
+          <td>{{task}}</td>
+          <td>{{slaDefinition}}</td>
+          <td>{{businessElapsedPercentage}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="section">
+    <div class="section chart">
+      <h2>Monthly Case Volume Chart</h2>
+      {{{lineChartImage}}}
+    </div>
+  </div>
+  
+  <!-- Thank Page -->
+  <div class="thank-page">
+    <h1>Thanks!</h1>
+    <hr class="section-divider" />
+  </div>
+
+</body>
+</html>
