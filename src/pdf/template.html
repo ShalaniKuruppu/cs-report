@@ -164,12 +164,47 @@
   </div>
 
   <div class="section">
-    <h2>Subscription Details</h2>
-    <p><strong>Project Key:</strong> {{projectKey}}</p>
-    <p><strong>Support Tier:</strong> {{supportTier}}</p>
-    <p><strong>Subscription:</strong> ${{subscription}}</p>
-    <p><strong>Query Hours:</strong> {{totalQueryHours}} ({{consumedQueryHours}} Utilized)</p>
+    <h2 style="color: #ff7300; font-size: 28px;">Subscription Details</h2>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <tr>
+        <td><strong>Project Name</strong></td>
+        <td>{{projectName}}</td>
+        <td><strong>Project Key</strong></td>
+        <td>{{projectKey}}</td>
+      </tr>
+      <tr>
+        <td><strong>Project Type</strong></td>
+        <td>{{projectType}}</td>
+        <td><strong>Support Tier</strong></td>
+        <td>{{supportTier}}</td>
+      </tr>
+      <tr>
+        <td><strong>Subscription Start Date</strong></td>
+        <td>{{startDate}}</td>
+        <td><strong>Subscription End Date</strong></td>
+        <td>{{endDate}}</td>
+      </tr>
+    </table>
+  
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #eef3f7;">
+      <thead style="background-color: #ff7300; color: white;">
+        <tr>
+          <th style="padding: 12px; font-size: 16px;">Product</th>
+          <th style="padding: 12px; font-size: 16px;">Subscription</th>
+          <th style="padding: 12px; font-size: 16px;">Query Hours</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 12px;">All Products</td>
+          <td style="padding: 12px;">${{subscription}}</td>
+          <td style="padding: 12px;">{{totalQueryHours}}<br><span style="font-size: 12px;">({{consumedQueryHours}} Utilized)</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+  
 
   <!-- Deployment -->
   <div class="sub-topic-page">
