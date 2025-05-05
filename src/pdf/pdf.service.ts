@@ -52,7 +52,8 @@ export class PdfService {
       notesText: 'Some notes about the project.',
       notesImage: '', // optional base64 image
       lineChartImage: new Handlebars.SafeString(`<img src="${chartImage}" alt="Monthly Case Volume Chart" width="1000"/>`),
-      generatedDate: new Date().toISOString().split('T')[0]
+      generatedDate: new Date().toISOString().split('T')[0],
+      slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
     };
 
     // Render the HTML with data

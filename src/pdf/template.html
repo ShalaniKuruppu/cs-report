@@ -224,6 +224,24 @@
     </div>
   </div>
 
+  <div class="section">
+    <h2 style="color: #ff7300; font-size: 28px;">Incident SLA Compliance</h2>
+    <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px;">
+      <div>
+        <div style="font-size: 30px; font-weight: bold; color: #455A66;">{{slaPerformanceStats.Resolution.percentage}}%</div>
+        <div style="font-size: 20px; font-weight: 600; margin-top: 10px;">Resolution ({{slaPerformanceStats.Resolution.fraction}})</div>
+      </div>
+      <div>
+        <div style="font-size: 30px; font-weight: bold; color: #455A66;">{{slaPerformanceStats.Workaround.percentage}}%</div>
+        <div style="font-size: 20px; font-weight: 600; margin-top: 10px;">Workaround ({{slaPerformanceStats.Workaround.fraction}})</div>
+      </div>
+      <div>
+        <div style="font-size: 30px; font-weight: bold; color: #455A66;">{{slaPerformanceStats.Response.percentage}}%</div>
+        <div style="font-size: 20px; font-weight: 600; margin-top: 10px;">Response ({{slaPerformanceStats.Response.fraction}})</div>
+      </div>
+    </div>
+  </div>
+  
 
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">WSO2 Product Updates</h2>
