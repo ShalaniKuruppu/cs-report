@@ -42,7 +42,53 @@ export class PdfService {
     Handlebars.registerHelper('eq', function (a, b) {
       return a === b;
     });
-    
+
+    const productEOLStatus: { product: string; eolDate: string; supportStatus: string }[] = [];
+    const seen = new Set();
+    for (const env of data?.projectDeployments || []) {
+      for (const p of env.products || []) {
+        const key = `${p.name} v${p.version}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          productEOLStatus.push({
+            product: key,
+            eolDate: p.eolDate ? new Date(p.eolDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : '—',
+            supportStatus: p.supportStatus || 'Unknown'
+          });
+        }
+      }
+}
+    // Extract and summarize current products usage (e.g., cores, TPS, etc.)
+const currentProductSummaries: { label: string; value: string }[] = [];
+const productMap = new Map<string, { cores: number; label: string }>();
+
+for (const env of data.projectDeployments || []) {
+  for (const p of env.products || []) {
+    if (p.name && p.cores && !isNaN(Number(p.cores))) {
+      const label = p.name;
+      const key = label;
+      const prev = productMap.get(key) || { cores: 0, label };
+      productMap.set(key, {
+        label,
+        cores: prev.cores + Number(p.cores),
+      });
+    }
+    if (p.name?.includes("Gateway") && p.tps) {
+      currentProductSummaries.push({
+        label: p.name,
+        value: `Transactional Cap of ${p.tps}M`,
+      });
+    }
+  }
+}
+
+for (const { label, cores } of productMap.values()) {
+  currentProductSummaries.push({
+    label,
+    value: `${cores} Cores`,
+  });
+}
+
     // Prepare context data
     const context = {
       ...data.subscriptionDetails,
@@ -54,6 +100,8 @@ export class PdfService {
       lineChartImage: new Handlebars.SafeString(`<img src="${chartImage}" alt="Monthly Case Volume Chart" width="1000"/>`),
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
+      productEOLStatus ,
+      currentProductSummaries
     };
 
     // Render the HTML with data

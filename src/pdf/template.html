@@ -215,7 +215,45 @@
     
     
   </div>
+
+  <div class="section">
+    <h2 style="color: #ff7300; font-size: 25px;">Current Products In Use</h2>
+    <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px;">
+      {{#each currentProductSummaries}}
+        <div style="border-right: 1px dashed #999; padding: 0 20px;">
+          <div style="font-size: 32px; font-weight: bold; color: #455A66;">{{value}}</div>
+          <div style="font-size: 18px; font-weight: 600; margin-top: 12px;">{{label}}</div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
   
+  <!-- Product Versions and EOL Status Widget -->
+<div class="section">
+  <h2 style="color: #ff7300; font-size: 28px;">Product versions and EOL Status</h2>
+  <p style="color: #444; font-size: 16px; margin-bottom: 20px;">
+    Once the migration is completed, the following versions will be in production too.
+    Test environment has already been completed
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Support EOL Date</th>
+        <th>Current Support Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each productEOLStatus}}
+      <tr>
+        <td>{{product}}</td>
+        <td>{{eolDate}}</td>
+        <td>{{supportStatus}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
    
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">Case Volume by Quarters</h2>
