@@ -3,7 +3,7 @@ import * as puppeteer from 'puppeteer';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
-import { generateLineChart } from './chart.util';
+import { generateLineChart, generatePieChart , generateBarChart,generateGroupedBarChart} from './chart.util';
 
 @Injectable()
 export class PdfService {
@@ -88,6 +88,135 @@ for (const { label, cores } of productMap.values()) {
     value: `${cores} Cores`,
   });
 }
+// Chart generation logic for Created vs Resolved Cases
+const createdCases = data.casesRecords.filter((caseData: any) => caseData.caseState === 'Open').length;
+console.log('Created Cases:', createdCases);
+const resolvedCases = data.casesRecords.filter((caseData: any) => caseData.caseState === 'Closed').length;
+console.log('Resolved Cases:', resolvedCases);
+
+// Generate Created vs Resolved Cases Bar Chart
+const createdVsResolvedChart = await generateBarChart(
+  ['Created', 'Resolved'],
+  [createdCases, resolvedCases],
+  'Cases Status'
+);
+
+// Cases by Deployment Pie Chart
+const casesByEnvironment = data.casesRecords.reduce((acc: any, caseData: any) => {
+  const deployment = caseData.deployment;
+  if (deployment) {
+    acc[deployment] = (acc[deployment] || 0) + 1;
+  }
+  return acc;
+}, {});
+
+const environments = Object.keys(casesByEnvironment);
+const environmentCounts = Object.values(casesByEnvironment);
+
+// Generate Cases by Deployment Pie Chart
+const casesByEnvironmentChart = await generatePieChart(environments, environmentCounts as number[]);
+
+// Utility to generate month labels between two dates in "MMM/YYYY" format
+function generateMonthLabels(startDate: Date, endDate: Date): string[] {
+  const months: string[] = [];
+  const current = new Date(startDate);
+
+  current.setDate(1); // Ensure we're at the start of a month
+
+  while (current < endDate) {
+    const label = current.toLocaleString('default', {
+      month: 'short',
+      year: 'numeric'
+    }).replace(' ', '/');
+    months.push(label);
+    current.setMonth(current.getMonth() + 1);
+  }
+
+  return months;
+}
+
+// Step 1: Prepare grouped data using reduce
+const casesByMonthAndProduct = data.casesRecords.reduce(
+  (acc: { [monthYear: string]: { [product: string]: number } }, record: any) => {
+    const product = record.productName;
+    const openedDate = new Date(record.opened);
+
+    // Skip invalid entries
+    if (!product || product === "N/A" || isNaN(openedDate.getTime())) return acc;
+
+    const monthYear = openedDate.toLocaleString('default', {
+      month: 'short',
+      year: 'numeric'
+    }).replace(' ', '/');
+
+    if (!acc[monthYear]) acc[monthYear] = {};
+    if (!acc[monthYear][product]) acc[monthYear][product] = 0;
+
+    acc[monthYear][product]++;
+    return acc;
+  },
+  {}
+);
+
+// Step 2: Determine full month range (based on data)
+const openedDates = data.casesRecords
+  .map((r: any) => new Date(r.opened))
+  .filter(d => !isNaN(d.getTime()));
+
+const minDate = new Date(Math.min(...openedDates.map(d => d.getTime())));
+const maxDate = new Date(Math.max(...openedDates.map(d => d.getTime())));
+
+const allMonths = generateMonthLabels(minDate, maxDate);
+
+// Step 3: Extract all unique product names
+const allProducts = Array.from(
+  new Set(Object.values(casesByMonthAndProduct as Record<string, Record<string, number>>).flatMap(monthData => Object.keys(monthData)))
+);
+
+// Step 4: Initialize missing months with empty product data
+for (const month of allMonths) {
+  if (!casesByMonthAndProduct[month]) {
+    casesByMonthAndProduct[month] = {};
+  }
+
+  for (const product of allProducts) {
+    if (!casesByMonthAndProduct[month][product]) {
+      casesByMonthAndProduct[month][product] = 0;
+    }
+  }
+}
+
+// Step 5: Build product series for chart
+const productSeries = allProducts.map((product) => ({
+  label: product,
+  data: allMonths.map(month => casesByMonthAndProduct[month][product] || 0),
+}));
+
+// Step 6: Generate the grouped bar chart
+const createdByProductChart = await generateGroupedBarChart(
+  allMonths,
+  productSeries,
+  'Cases Created by Product'
+);
+
+
+
+
+// Incident Created by Priority Bar Chart
+const casesByPriority = data.casesRecords.reduce((acc: any, caseData: any) => {
+  const priority = caseData.casePriority;
+  if (priority && priority !== "N/A") {
+    acc[priority] = (acc[priority] || 0) + 1;
+  }
+  return acc;
+}, {});
+
+const priorities = Object.keys(casesByPriority);
+const priorityCounts = Object.values(casesByPriority);
+
+// Generate Incident Created by Priority Bar Chart
+const incidentByPriorityChart = await generateBarChart(priorities, priorityCounts as number[], 'Incident Created by Priority');
+
 
     // Prepare context data
     const context = {
@@ -101,8 +230,12 @@ for (const { label, cores } of productMap.values()) {
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
       productEOLStatus ,
-      currentProductSummaries
-    };
+      currentProductSummaries,
+      createdVsResolvedChart,
+      casesByEnvironmentChart,
+      createdByProductChart,
+      incidentByPriorityChart,
+        };
 
     // Render the HTML with data
     const renderedHtml = template(context);
@@ -138,3 +271,4 @@ for (const { label, cores } of productMap.values()) {
     return filePath;
   }
 }
+
