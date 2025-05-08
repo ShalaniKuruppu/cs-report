@@ -356,6 +356,38 @@
     {{/each}}
   </div>
 
+  <div class="sub-topic-page">
+    <h1>Engagement</h1>
+    <hr class="section-divider" />
+    </div>
+    <div class="section">
+      <h2>Engagements</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Created</th>
+          <th>Case</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Updated</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each casesRecords}}
+          <tr>
+            <td>{{opened}}</td>
+            <td>{{caseNumber}}</td>
+            <td>{{description}}</td>
+            <td>{{engagementType}}</td>
+            <td>{{updated}}</td>
+            <td>{{comments}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  
   <!-- SLA Info -->
   <div class="sub-topic-page">
     <h1>SLA & Other Information</h1>

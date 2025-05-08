@@ -221,6 +221,7 @@ const incidentByPriorityChart = await generateBarChart(priorities, priorityCount
     // Prepare context data
     const context = {
       ...data.subscriptionDetails,
+      casesRecords: Array.isArray(data?.casesRecords) ? data.casesRecords : [],
       slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
       projectDeployments: Array.isArray(data?.projectDeployments) ? data.projectDeployments : [],
       businessOverviewText: 'Business overview placeholder text.',
