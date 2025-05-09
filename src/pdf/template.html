@@ -34,7 +34,14 @@
       box-sizing: border-box;
     }
 
-    .front-page h1,
+    .front-page h1{
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: white;
+      margin-left: 50px
+    }
+
     .thank-page h1 {
       font-size: 30px;
       font-weight: bold;
@@ -48,34 +55,50 @@
       font-size: 24px;
       font-weight: bold;
       color: #ffc808;
+      margin-bottom: 90px;
       margin-left: 50px;
     }
 
+    .front-page .section-divider {
+    border-top: 2px solid #ff7300;
+    margin-bottom: 3px;
+  }  
+
+  .front-page .current-date {
+    font-size: 14px;
+    color: white;
+    margin-left: 50px;
+  }
     .section-divider {
       border-top: 2px solid #ff7300;
       width: 100%;
       margin: 20px auto;
     }
 
-    .agenda-page h1 {
-      font-size: 28px;
-      margin: 40px 0 60px 50px;
-      color: #ff7300;
-    }
-
     .agenda-page ul {
-      list-style-type: none;
-      padding-left: 50px;
+    font-size: 18px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    padding-left: 0;
+    list-style: none;
+    position: relative;
+}
+
+    .agenda-page ul li {
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 20px;
     }
 
     .agenda-page ul li::before {
-      content: "\2022";
+      content: "•";
+      font-size: 20px;
       color: orange;
-      font-weight: bold;
-      display: inline-block;
-      width: 1em;
-      margin-left: -1em;
+      position: absolute;
+      left: 0;
+      top: 0;
     }
+
 
     .sub-topic-page h1,
     .records-page h1 {
@@ -142,7 +165,7 @@
     <h1>{{accountName}} - Customer Success Report</h1>
     <p>Accelerating Success Together</p>
     <hr class="section-divider" />
-    <p>Generated on: {{generatedDate}}</p>
+    <p class="current-date">Generated on: {{generatedDate}}</p>
   </div>
 
   <!-- Agenda Page -->
@@ -150,10 +173,8 @@
     <h1>Table of Contents</h1>
     <ul>
       <li>Support Update</li>
-      <li>Current Deployment</li>
+      <li>Engagement</li>
       <li>SLA & Other Information</li>
-      <li>Client Business Overview</li>
-      <li>Notes</li>
     </ul>
   </div>
 
