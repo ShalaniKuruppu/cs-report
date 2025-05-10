@@ -52,6 +52,10 @@
       margin-left: 0px;
       font-size: 14px;
     }
+    .with-border {
+  border-right: 1px dashed #999;
+}
+
     .front-page h1{
       font-size: 30px;
       font-weight: bold;
@@ -263,12 +267,13 @@
     
     
   </div>
-
   <div class="section">
     <h2 style="color: #ff7300; font-size: 25px;">Current Products In Use</h2>
-    <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px;">
+    <div style="display: flex; gap: 40px; justify-content: center; text-align: center; margin-top: 40px;">
       {{#each currentProductSummaries}}
-        <div style="border-right: 1px dashed #999; padding: 0 20px;">
+        <div
+          style="padding: 0 20px; min-width: 150px;"
+          {{#unless @last}}class="with-border"{{/unless}}>
           <div style="font-size: 32px; font-weight: bold; color: #455A66;">{{value}}</div>
           <div style="font-size: 18px; font-weight: 600; margin-top: 12px;">{{label}}</div>
         </div>
