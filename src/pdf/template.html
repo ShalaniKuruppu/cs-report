@@ -33,7 +33,25 @@
       min-height: 148mm;
       box-sizing: border-box;
     }
-
+    
+    .subscription-details {
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 100px;
+      margin-top: 5px;
+    }
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      margin-bottom: 5px;
+      font-size: 16px;
+      padding: 10px;
+    }
+    .data-info {
+      margin-left: 0px;
+      font-size: 14px;
+    }
     .front-page h1{
       font-size: 30px;
       font-weight: bold;
@@ -186,28 +204,33 @@
 
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">Subscription Details</h2>
-    
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-      <tr>
-        <td><strong>Project Name</strong></td>
-        <td>{{projectName}}</td>
-        <td><strong>Project Key</strong></td>
-        <td>{{projectKey}}</td>
-      </tr>
-      <tr>
-        <td><strong>Project Type</strong></td>
-        <td>{{projectType}}</td>
-        <td><strong>Support Tier</strong></td>
-        <td>{{supportTier}}</td>
-      </tr>
-      <tr>
-        <td><strong>Subscription Start Date</strong></td>
-        <td>{{startDate}}</td>
-        <td><strong>Subscription End Date</strong></td>
-        <td>{{endDate}}</td>
-      </tr>
-    </table>
-  
+     <div class="subscription-details">
+      <div class = "detail-item">
+        <strong>Project Name</strong>
+        <div class = "data-info">{{projectName}}</div>
+      </div>
+      <div class = "detail-item">
+        <strong>Project Key</strong>
+        <div class = "data-info">{{projectKey}}</div>
+      </div>
+      <div class = "detail-item">
+        <strong>Project Type</strong>
+        <div class = "data-info">{{projectType}}</div>
+      </div>
+      <div class = "detail-item">
+        <strong>Support Tier</strong>
+        <div class = "data-info">{{supportTier}}</div>
+      </div>
+      <div class = "detail-item">
+        <strong>Subscription Start Date</strong>
+        <div class = "data-info">{{startDate}}</div>
+      </div>
+      <div class = "detail-item">
+        <strong>Subscription End Date</strong>
+        <div class = "data-info">{{endDate}}</div>
+      </div>
+
+     </div>
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #dde6e6;">
       <thead style="background-color: #ff7300; color: white;">
         <tr>
