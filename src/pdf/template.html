@@ -308,31 +308,38 @@
   </div>
   
   <!-- Product Versions and EOL Status Widget -->
-<div class="section">
-  <h2 style="color: #ff7300; font-size: 28px;">Product versions and EOL Status</h2>
-  <p style="color: #444; font-size: 16px; margin-bottom: 20px;">
-    Once the migration is completed, the following versions will be in production too.
-    Test environment has already been completed
-  </p>
-  <table>
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Support EOL Date</th>
-        <th>Current Support Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each productEOLStatus}}
-      <tr>
-        <td>{{product}}</td>
-        <td>{{eolDate}}</td>
-        <td>{{supportStatus}}</td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
-</div>
+  <div class="section">
+    <h2 style="color: #ff7300; font-size: 28px;">Product Versions and EOL Status</h2>
+    <p style="color: #444; font-size: 16px; margin-bottom: 20px;">
+      Once the migration is completed, the following versions will be in production too.
+      Test environment has already been completed
+    </p>
+  
+    {{#each projectDeployments}}
+      {{#if products.length}}
+        <h3 style="margin-top: 30px;">{{name}} Environment</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Support EOL Date</th>
+              <th>Current Support Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each products}}
+            <tr>
+              <td>{{name}} v{{version}}</td>
+              <td>{{#if eolDate}}{{eolDate}}{{else}}N/A{{/if}}</td>
+              <td>{{supportStatus}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{/if}}
+    {{/each}}
+  </div>
+  
 <div class="section">
   <h2 style="color: #ff7300; font-size: 28px;">Cases </h2>
   
