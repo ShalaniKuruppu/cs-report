@@ -232,28 +232,32 @@
 
      </div>
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #dde6e6;">
-      <thead style="background-color: #ff7300; color: white;">
+      <thead>
         <tr>
-          <th style="padding: 14px; font-size: 16px;">Product</th>
-          <th style="padding: 14px; font-size: 16px;">Subscription</th>
-          <th style="padding: 14px; font-size: 16px;">Query Hours</th>
+          <th style="padding: 14px; font-size: 16px; background-color: #ff7300; color: white;">Product</th>
+          <th style="padding: 14px; font-size: 16px; background-color: #ff7300; color: white;">Subscription</th>
+          <th style="padding: 14px; font-size: 16px; background-color: #ff7300; color: white;">Query Hours</th>
         </tr>
       </thead>
       <tbody>
-        {{#each (uniqueProducts projectDeployments) as |productName index|}}
-        <tr>
-          <td style="padding: 12px; font-size: 15px;">{{productName}}</td>
-          <td style="padding: 12px; font-size: 15px;">
-            {{#if (eq index 0)}}${{../subscription}}{{/if}}
-          </td>
-          <td style="padding: 12px; font-size: 15px;">
-            {{#if (eq index 0)}}
-              {{../totalQueryHours}}<br>
-              <span style="font-size: 12px;">({{../consumedQueryHours}} Utilized)</span>
+        {{#with (uniqueProducts projectDeployments) as |products|}}
+        {{#each products}}
+          <tr>
+            <td style="padding: 12px; font-size: 15px;">{{this}}</td>
+      
+            {{#if @first}}
+              <td rowspan="{{products.length}}" style="padding: 12px; font-size: 15px; text-align: center;">
+                ${{@root.subscription}}
+              </td>
+              <td rowspan="{{products.length}}" style="padding: 12px; font-size: 15px;">
+                {{@root.totalQueryHours}}<br />
+                <span style="font-size: 12px; text-align: center;">({{@root.consumedQueryHours}} Utilized)</span>
+              </td>
             {{/if}}
-          </td>
-        </tr>
+          </tr>
         {{/each}}
+      {{/with}}
+      
       </tbody>
     </table>
     
