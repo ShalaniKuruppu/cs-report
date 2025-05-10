@@ -404,43 +404,7 @@
         <p>Response ({{slaPerformanceStats.Response.fraction}})</p>
       </div>
     </div>
-  </div>
-  
-
-  <div class="section">
-    <h2 style="color: #ff7300; font-size: 28px;">WSO2 Product Updates</h2>
-    {{#each projectDeployments}}
-      {{#if products.length}}
-        <h3>{{name}} Environment</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Version</th>
-              <th>Support Status</th>
-              <th>Support EOL Date</th>
-              <th>Cores</th>
-              <th>TPS</th>
-              <th>Update Level</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each products}}
-            <tr>
-              <td>{{name}}</td>
-              <td>{{version}}</td>
-              <td>{{supportStatus}}</td>
-              <td>{{eolDate}}</td>
-              <td>{{cores}}</td>
-              <td>{{tps}}</td>
-              <td>{{updateLevelInfo}}</td>
-            </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      {{/if}}
-    {{/each}}
-  </div>
+  </div> 
 
   <div class="sub-topic-page">
     <h1>Engagement</h1>
