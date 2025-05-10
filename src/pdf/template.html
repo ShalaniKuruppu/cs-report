@@ -158,7 +158,33 @@
       background-color: #455A66;
       color: white;
     }
-
+    .sla-stats{
+      display:flex;
+      justify-content: space-around;
+      align-items: center;
+      text-align: center;
+      padding: 15px 0;
+      flex-direction: row;
+      gap: 20px; 
+    }
+    .sla-metric{
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 15px;
+      width: 30%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .sla-metric h3{
+      font-size: 26px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .sla-metric p{
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
     .chart {
       text-align: center;
       margin-top: 30px;
@@ -357,18 +383,18 @@
 
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">Incident SLA Compliance</h2>
-    <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 40px;">
-      <div>
-        <div style="font-size: 30px; font-weight: bold; color: #455A66;">{{slaPerformanceStats.Resolution.percentage}}%</div>
-        <div style="font-size: 20px; font-weight: 600; margin-top: 10px;">Resolution ({{slaPerformanceStats.Resolution.fraction}})</div>
+    <div class = "sla-stats">
+      <div class ="sla-metric">
+        <h3>{{slaPerformanceStats.Resolution.percentage}}%</h3>
+        <p>Resolution ({{slaPerformanceStats.Resolution.fraction}})</p>
       </div>
-      <div>
-        <div style="font-size: 30px; font-weight: bold; color: #455A66;">{{slaPerformanceStats.Workaround.percentage}}%</div>
-        <div style="font-size: 20px; font-weight: 600; margin-top: 10px;">Workaround ({{slaPerformanceStats.Workaround.fraction}})</div>
+      <div class ="sla-metric">
+        <h3>{{slaPerformanceStats.Workaround.percentage}}%</h3>
+        <p>Workaround ({{slaPerformanceStats.Workaround.fraction}})</p>
       </div>
-      <div>
-        <div style="font-size: 30px; font-weight: bold; color: #455A66;">{{slaPerformanceStats.Response.percentage}}%</div>
-        <div style="font-size: 20px; font-weight: 600; margin-top: 10px;">Response ({{slaPerformanceStats.Response.fraction}})</div>
+      <div class ="sla-metric">
+        <h3>{{slaPerformanceStats.Response.percentage}}%</h3>
+        <p>Response ({{slaPerformanceStats.Response.fraction}})</p>
       </div>
     </div>
   </div>
