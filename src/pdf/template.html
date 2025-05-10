@@ -324,6 +324,7 @@
               <th>Product</th>
               <th>Support EOL Date</th>
               <th>Current Support Status</th>
+              <th>Comments</th>
             </tr>
           </thead>
           <tbody>
@@ -332,6 +333,7 @@
               <td>{{name}} v{{version}}</td>
               <td>{{#if eolDate}}{{eolDate}}{{else}}N/A{{/if}}</td>
               <td>{{supportStatus}}</td>
+              <td ></td>
             </tr>
             {{/each}}
           </tbody>
@@ -419,8 +421,7 @@
           <th>Case</th>
           <th>Description</th>
           <th>Type</th>
-          <th>Updated</th>
-          <th>Comments</th>
+          <th>Updated</th>  
         </tr>
       </thead>
       <tbody>
@@ -431,7 +432,6 @@
             <td>{{description}}</td>
             <td>{{engagementType}}</td>
             <td>{{updated}}</td>
-            <td>{{comments}}</td>
           </tr>
         {{/each}}
       </tbody>
@@ -451,7 +451,7 @@
         <tr>
           <th>Task</th>
           <th>SLA Definition</th>
-          <th>Business Elapsed %</th>
+          <th>Business Elapsed Percentage</th>
         </tr>
       </thead>
       <tbody>
