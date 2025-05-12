@@ -25,13 +25,11 @@ export class PdfService {
     const chartImage = await generateLineChart(data.monthlyCounts || []);
 
     Handlebars.registerHelper('uniqueProducts', function (deployments: any[]) {
-      const seen = new Set();
       const productList: string[] = [];
     
       deployments.forEach(env => {
         (env.products || []).forEach(p => {
-          if (!seen.has(p.name)) {
-            seen.add(p.name);
+          if (!productList.includes(p.name)) {
             productList.push(p.name);
           }
         });
@@ -40,17 +38,17 @@ export class PdfService {
       return productList;
     });
     
-    Handlebars.registerHelper('eq', function (a, b) {
-      return a === b;
-    });
+    // Handlebars.registerHelper('eq', function (a, b) {
+    //   return a === b;
+    // });
 
     const productEOLStatus: { product: string; eolDate: string; supportStatus: string }[] = [];
-    const seen = new Set();
+    const duplicates = new Set();
     for (const env of data?.projectDeployments || []) {
       for (const p of env.products || []) {
         const key = `${p.name} v${p.version}`;
-        if (!seen.has(key)) {
-          seen.add(key);
+        if (!duplicates.has(key)) {
+          duplicates.add(key);
           productEOLStatus.push({
             product: key,
             eolDate: p.eolDate ? new Date(p.eolDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : '—',
