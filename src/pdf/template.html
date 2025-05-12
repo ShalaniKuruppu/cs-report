@@ -34,6 +34,13 @@
       box-sizing: border-box;
     }
     
+    .front-page-logo{
+      max-width: 10%;
+      height:auto;
+      margin-top:100px;
+      margin-bottom: 30px;
+      margin-left: 50px;
+    }
     .subscription-details {
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -216,13 +223,13 @@
       page-break-after: always;
       text-align: center;
      }
-
   </style>
 </head>
 <body>
 
   <!-- Front Page -->
   <div class="front-page">
+    <img src="{{logo}}" alt="Logo" class="front-page-logo" />
     <h1>{{accountName}} - Customer Success Report</h1>
     <p>Accelerating Success Together</p>
     <hr class="section-divider" />

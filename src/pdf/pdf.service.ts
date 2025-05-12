@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
 import { generateLineChart, generatePieChart , generateBarChart,generateGroupedBarChart} from './chart.util';
 
+
 @Injectable()
 export class PdfService {
   async generateCSReport(data: any): Promise<string> {
@@ -217,6 +218,11 @@ const priorityCounts = Object.values(casesByPriority);
 // Generate Incident Created by Priority Bar Chart
 const incidentByPriorityChart = await generateBarChart(priorities, priorityCounts as number[], 'Incident Created by Priority');
 
+const logoImagePath = path.join(__dirname, '../../src/pdf/images/wso2-logo-orange.png');
+const logoBase64 = fs.readFileSync(logoImagePath, { encoding: 'base64' });
+const logoDataUri = `data:image/png;base64,${logoBase64}`;
+
+
 
     // Prepare context data
     const context = {
@@ -236,6 +242,7 @@ const incidentByPriorityChart = await generateBarChart(priorities, priorityCount
       casesByEnvironmentChart,
       createdByProductChart,
       incidentByPriorityChart,
+      logo: logoDataUri,
         };
 
     // Render the HTML with data
