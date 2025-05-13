@@ -54,34 +54,7 @@ export async function generateLineChart(monthlyCounts: any[]): Promise<string> {
   const buffer = await chartJSNodeCanvas.renderToBuffer(config);
   return `data:image/png;base64,${buffer.toString('base64')}`;
 }
-export async function generateBarChart(labels: string[], data: number[], label: string): Promise<string> {
-  const config: ChartConfiguration<'bar'> = {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label,
-          data,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  };
 
-  const buffer = await chartJSNodeCanvas.renderToBuffer(config);
-  return `data:image/png;base64,${buffer.toString('base64')}`;
-}
 
 export async function generateGroupedBarChart(
   labels: string[],
@@ -98,6 +71,10 @@ export async function generateGroupedBarChart(
     "#25AAE1", "#3EB5E5", "#57C0E9", "#2299CC",
     "#1F84A6", "#1A6D8B", "#70CBED", "#FFD166"
   ];
+   // Dynamic width: 100px per label, minimum 800px
+   const width = Math.max(labels.length , 800);
+   const height = 200;
+   const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
 
   // Define custom color logic by chart type
   let datasets: any[] = [];
@@ -111,24 +88,28 @@ export async function generateGroupedBarChart(
       "WSO2 Enterprise Integrator": "#1F84A6",
       "WSO2 Identity Server": "#1A6D8B",
       "WSO2 Micro Integrator": "#70CBED",
-      "Unknown": greyColor
+      "Unknown": greyColor,
     };
-
-    datasets = productSeries.map((series, index) => ({
-      label: series.label,
-      data: series.data,
-      backgroundColor: productColors[series.label] || productColors[index % defaultColors.length],
-      borderColor: "rgba(0,0,0,0.1)",
-      borderWidth: 1
-    }));
+  
+    datasets = productSeries.map((series, index) => {
+      const label = series.label?.trim() || "Unknown";
+      const color = productColors[label] || defaultColors[index % defaultColors.length];
+  
+      return {
+        label,
+        data: series.data,
+        backgroundColor: color,
+        borderColor: "rgba(0,0,0,0.1)",
+        borderWidth: 1,
+      };
+    });
   }
-
+  
   else if (chartType === "priority") {
     datasets = productSeries.map((series, index) => ({
       label: series.label,
       data: series.data,
       backgroundColor: series.label === "Unknown" ? greyColor : defaultColors[index % defaultColors.length],
-      borderColor: "rgba(0,0,0,0.1)",
       borderWidth: 1
     }));
   }
@@ -143,7 +124,6 @@ export async function generateGroupedBarChart(
       label: series.label,
       data: series.data,
       backgroundColor: stateColors[series.label] || greyColor,
-      borderColor: "rgba(0,0,0,0.1)",
       borderWidth: 1
     }));
   }

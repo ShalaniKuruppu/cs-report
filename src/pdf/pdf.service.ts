@@ -3,7 +3,7 @@ import * as puppeteer from 'puppeteer';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
-import { generateLineChart, generatePieChart , generateBarChart,generateGroupedBarChart} from './chart.util';
+import { generateLineChart, generatePieChart ,generateGroupedBarChart} from './chart.util';
 
 
 @Injectable()
@@ -118,90 +118,55 @@ const environmentCounts = Object.values(casesByEnvironment);
 // Generate Cases by Deployment Pie Chart
 const casesByEnvironmentChart = await generatePieChart(environments, environmentCounts as number[]);
 
-// Utility to generate month labels between two dates in "MMM/YYYY" format
-function generateMonthLabels(startDate: Date, endDate: Date): string[] {
-  const months: string[] = [];
-  const current = new Date(startDate);
-
-  current.setDate(1); // Ensure we're at the start of a month
-
-  while (current < endDate) {
-    const label = current.toLocaleString('default', {
-      month: 'short',
-      year: 'numeric'
-    }).replace(' ', '/');
-    months.push(label);
-    current.setMonth(current.getMonth() + 1);
-  }
-  return months;
-}
-
-// Step 1: Prepare grouped data using reduce
+// === STEP 1: Aggregate product cases by month ===
 const casesByMonthAndProduct = data.casesRecords.reduce(
-  (acc: { [monthYear: string]: { [product: string]: number } }, record: any) => {
-    const product = record.productName;
+  (acc: { [month: string]: { [product: string]: number } }, record: any) => {
     const openedDate = new Date(record.opened);
+    const product = record.productName;
 
-    // Skip invalid entries
-    if (!product || product === "N/A" || isNaN(openedDate.getTime())) return acc;
+    // Skip if missing or "N/A"
+    if (!product || product === "N/A" ) return acc;
 
-    const monthYear = openedDate.toLocaleString('default', {
+    const monthKey = openedDate.toLocaleString('default', {
       month: 'short',
       year: 'numeric'
-    }).replace(' ', '/');
+    });
 
-    if (!acc[monthYear]) acc[monthYear] = {};
-    if (!acc[monthYear][product]) acc[monthYear][product] = 0;
+    if (!acc[monthKey]) acc[monthKey] = {};
+    if (!acc[monthKey][product]) acc[monthKey][product] = 0;
 
-    acc[monthYear][product]++;
+    acc[monthKey][product]++;
     return acc;
   },
   {}
 );
 
-// Step 2: Determine full month range (based on data)
-const openedDates = data.casesRecords
-  .map((r: any) => new Date(r.opened))
-  .filter(d => !isNaN(d.getTime()));
+// === STEP 2: Extract all month labels and product names ===
+const monthLabels = Object.keys(casesByMonthAndProduct).sort((a, b) => {
+  const [aMonth, aYear] = a.split('/');
+  const [bMonth, bYear] = b.split('/');
+  return new Date(`${aMonth} 1, ${aYear}`).getTime() - new Date(`${bMonth} 1, ${bYear}`).getTime();
+});
 
-const minDate = new Date(Math.min(...openedDates.map(d => d.getTime())));
-const maxDate = new Date(Math.max(...openedDates.map(d => d.getTime())));
-
-const allMonths = generateMonthLabels(minDate, maxDate);
-
-// Step 3: Extract all unique product names
-const allProducts = Array.from(
-  new Set(Object.values(casesByMonthAndProduct as Record<string, Record<string, number>>).flatMap(monthData => Object.keys(monthData)))
-);
-
-// Step 4: Initialize missing months with empty product data
-for (const month of allMonths) {
-  if (!casesByMonthAndProduct[month]) {
-    casesByMonthAndProduct[month] = {};
-  }
-
-  for (const product of allProducts) {
-    if (!casesByMonthAndProduct[month][product]) {
-      casesByMonthAndProduct[month][product] = 0;
-    }
-  }
+const productSet = new Set<string>();
+for (const month of monthLabels) {
+  Object.keys(casesByMonthAndProduct[month]).forEach(product => productSet.add(product));
 }
+const allProducts = Array.from(productSet);
 
-// Step 5: Build product series for chart
-const productSeries = allProducts.map((product) => ({
+// === STEP 3: Build datasets ===
+const productSeries = allProducts.map(product => ({
   label: product,
-  data: allMonths.map(month => casesByMonthAndProduct[month][product] || 0),
+  data: monthLabels.map(month => casesByMonthAndProduct[month]?.[product] || 0)
 }));
 
-// Step 6: Generate the grouped bar chart
+// === STEP 4: Generate grouped bar chart ===
 const createdByProductChart = await generateGroupedBarChart(
-  allMonths,
+  monthLabels,
   productSeries,
-  'Cases Created by Product'
+  "Cases Created by Product",
+  { chartType: "product" }
 );
-
-
-
 
 // Incident Created by Priority Bar Chart
 const casesByPriority = data.casesRecords.reduce((acc: any, caseData: any) => {
@@ -215,8 +180,49 @@ const casesByPriority = data.casesRecords.reduce((acc: any, caseData: any) => {
 const priorities = Object.keys(casesByPriority);
 const priorityCounts = Object.values(casesByPriority);
 
-// Generate Incident Created by Priority Bar Chart
-const incidentByPriorityChart = await generateBarChart(priorities, priorityCounts as number[], 'Incident Created by Priority');
+// Step 1: Group by month and priority
+const priorityMonthMap = new Map<string, Record<string, number>>();
+
+for (const record of data.casesRecords || []) {
+  const rawDate = record.opened?.split(" ")[0];
+  const priority = record.casePriority;
+
+  if (!rawDate || !priority || priority === "N/A") continue;
+
+  const date = new Date(rawDate);
+  const month = date.toLocaleString('default', { month: 'short', year: 'numeric' }).replace(" ", "/");
+
+  if (!priorityMonthMap.has(month)) {
+    priorityMonthMap.set(month, {});
+  }
+
+  const monthData = priorityMonthMap.get(month)!;
+  monthData[priority] = (monthData[priority] || 0) + 1;
+}
+
+const priorityMonthLabels = Array.from(priorityMonthMap.keys()).sort(
+  (a, b) => new Date(parseInt(a.split("/")[1]), new Date(Date.parse(a.split("/")[0] + " 1")).getMonth()).getTime() -
+            new Date(parseInt(b.split("/")[1]), new Date(Date.parse(b.split("/")[0] + " 1")).getMonth()).getTime()
+);
+
+const allPriorities = Array.from(
+  new Set(
+    Array.from(priorityMonthMap.values()).flatMap(monthData => Object.keys(monthData))
+  )
+);
+
+const prioritySeries = allPriorities.map(priority => ({
+  label: priority,
+  data: priorityMonthLabels.map(month => priorityMonthMap.get(month)?.[priority] || 0)
+}));
+
+const incidentByPriorityChart = await generateGroupedBarChart(
+  priorityMonthLabels,
+  prioritySeries,
+  "Incident Created by Priority (Monthly)",
+  { chartType: "priority" }
+);
+
 
 const logoImagePath = path.join(__dirname, '../../src/pdf/images/wso2-logo-orange.png');
 const logoBase64 = fs.readFileSync(logoImagePath, { encoding: 'base64' });
