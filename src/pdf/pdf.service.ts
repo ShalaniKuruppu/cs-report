@@ -67,17 +67,40 @@ for (const env of data.projectDeployments || []) {
   }
 }
 
-// Chart generation logic for Created vs Resolved Cases
-const createdCases = data.casesRecords.filter((caseData: any) => caseData.caseState === 'Open').length;
-console.log('Created Cases:', createdCases);
-const resolvedCases = data.casesRecords.filter((caseData: any) => caseData.caseState === 'Closed').length;
-console.log('Resolved Cases:', resolvedCases);
+// Grouped bar chart for Created vs Resolved Cases
+const dailyStateCounts = new Map<string, { Open: number; Closed: number }>();
 
-// Generate Created vs Resolved Cases Bar Chart
-const createdVsResolvedChart = await generateBarChart(
-  ['Created', 'Resolved'],
-  [createdCases, resolvedCases],
-  'Cases Status'
+for (const record of data.casesRecords || []) {
+  const day = record.opened?.split(' ')[0]; 
+  const state = record.caseState;
+
+  if (!day) continue;
+
+  if (!dailyStateCounts.has(day)) {
+    dailyStateCounts.set(day, { Open: 0, Closed: 0 });
+  }
+
+  const counts = dailyStateCounts.get(day);
+  if (counts) {
+    if (state === "Open") counts.Open++;
+    if (state === "Closed") counts.Closed++;
+  }
+}
+
+// Prepare data for chart
+const sortedDays = Array.from(dailyStateCounts.keys()).sort();
+const openedData = sortedDays.map(day => (dailyStateCounts.get(day)?.Open ?? 0));
+const resolvedData = sortedDays.map(day => dailyStateCounts.get(day)?.Closed ?? 0);
+
+// Generate grouped bar chart
+const createdVsResolvedChart = await generateGroupedBarChart(
+  sortedDays,
+  [
+    { label: "Opened", data: openedData },
+    { label: "Resolved", data: resolvedData },
+  ],
+  "Created vs Resolved Cases",
+  { chartType: "state" }
 );
 
 // Cases by Deployment Pie Chart

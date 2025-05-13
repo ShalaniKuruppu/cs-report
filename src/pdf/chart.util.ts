@@ -84,46 +84,107 @@ export async function generateBarChart(labels: string[], data: number[], label: 
 }
 
 export async function generateGroupedBarChart(
-  labels: string[],                 // e.g., ["Jul/2024", "Aug/2024", "Sep/2024"]
-  productSeries: ProductSeries[],   // array of { label: "Product A", data: [1, 2, 3] }
-  title: string                     // e.g., "Created by Product"
+  labels: string[],
+  productSeries: ProductSeries[],
+  title: string,
+  options?: {
+    chartType?: 'product' | 'priority' | 'state';
+  }
 ): Promise<string> {
+  const chartType = options?.chartType;
+
+  const greyColor = "#999999";
+  const defaultColors = [
+    "#25AAE1", "#3EB5E5", "#57C0E9", "#2299CC",
+    "#1F84A6", "#1A6D8B", "#70CBED", "#FFD166"
+  ];
+
+  // Define custom color logic by chart type
+  let datasets: any[] = [];
+
+  if (chartType === "product") {
+    const productColors: Record<string, string> = {
+      "WSO2 API Manager": "#25AAE1",
+      "WSO2 API Manager Analytics": "#3EB5E5",
+      "WSO2 API Platform for Kubernetes": "#57C0E9",
+      "Ballerina": "#2299CC",
+      "WSO2 Enterprise Integrator": "#1F84A6",
+      "WSO2 Identity Server": "#1A6D8B",
+      "WSO2 Micro Integrator": "#70CBED",
+      "Unknown": greyColor
+    };
+
+    datasets = productSeries.map((series, index) => ({
+      label: series.label,
+      data: series.data,
+      backgroundColor: productColors[series.label] || productColors[index % defaultColors.length],
+      borderColor: "rgba(0,0,0,0.1)",
+      borderWidth: 1
+    }));
+  }
+
+  else if (chartType === "priority") {
+    datasets = productSeries.map((series, index) => ({
+      label: series.label,
+      data: series.data,
+      backgroundColor: series.label === "Unknown" ? greyColor : defaultColors[index % defaultColors.length],
+      borderColor: "rgba(0,0,0,0.1)",
+      borderWidth: 1
+    }));
+  }
+
+  else if (chartType === "state") {
+    const stateColors: Record<string, string> = {
+      Opened: "#25AAE1",
+      Resolved: "#1A6D8B"
+    };
+
+    datasets = productSeries.map((series) => ({
+      label: series.label,
+      data: series.data,
+      backgroundColor: stateColors[series.label] || greyColor,
+      borderColor: "rgba(0,0,0,0.1)",
+      borderWidth: 1
+    }));
+  }
+
   const config: ChartConfiguration<'bar'> = {
     type: 'bar',
     data: {
       labels,
-      datasets: productSeries.map(series => ({
-        label: series.label,
-        data: series.data,
-        backgroundColor: ['rgba(255, 99, 132, 0.5)',
-            'rgba(54, 162, 235, 0.5)',
-            'rgba(255, 206, 86, 0.5)',
-            'rgba(75, 192, 192, 0.5)',
-            'rgba(153, 102, 255, 0.5)',],
-        borderColor: 'rgba(0, 0, 0, 0.1)',
-        borderWidth: 1,
-      })),
+      datasets,
     },
     options: {
       responsive: true,
       plugins: {
         title: {
           display: true,
-          text: title,
+          text:
+            chartType === "state"
+              ? "Created vs Resolved Cases"
+              : chartType === "priority"
+              ? "Cases Created by Priority"
+              : "Cases Created by Product",
+        },
+        legend: {
+          position: "top",
         },
       },
       scales: {
+        x: {
+          title: {
+            display: true,
+            text: chartType === "state" ? "Days" : "Months",
+          },
+        },
         y: {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Case Count',
+            text: "Number of Cases",
           },
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Month',
+          ticks: {
+            stepSize: 1,
           },
         },
       },
@@ -131,7 +192,7 @@ export async function generateGroupedBarChart(
   };
 
   const buffer = await chartJSNodeCanvas.renderToBuffer(config);
-  return `data:image/png;base64,${buffer.toString('base64')}`;
+  return `data:image/png;base64,${buffer.toString("base64")}`;
 }
 
 export async function generatePieChart(labels: string[], data: number[]): Promise<string> {
