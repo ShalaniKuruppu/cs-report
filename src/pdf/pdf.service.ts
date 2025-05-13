@@ -212,9 +212,6 @@ const logoDataUri = `data:image/png;base64,${logoBase64}`;
       casesRecords: Array.isArray(data?.casesRecords) ? data.casesRecords : [],
       slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
       projectDeployments: Array.isArray(data?.projectDeployments) ? data.projectDeployments : [],
-      businessOverviewText: 'Business overview placeholder text.',
-      notesText: 'Some notes about the project.',
-      notesImage: '', // optional base64 image
       lineChartImage: new Handlebars.SafeString(`<img src="${chartImage}" alt="Monthly Case Volume Chart" width="1000"/>`),
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
@@ -225,7 +222,7 @@ const logoDataUri = `data:image/png;base64,${logoBase64}`;
       createdByProductChart,
       incidentByPriorityChart,
       logo: logoDataUri,
-        };
+    };
 
     // Render the HTML with data
     const renderedHtml = template(context);
@@ -253,7 +250,7 @@ const logoDataUri = `data:image/png;base64,${logoBase64}`;
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    const fileName = `cs_report_${data.subscriptionDetails.projectKey}.pdf`;
+    const fileName = `CS_REPORT_${data.subscriptionDetails.projectKey}.pdf`;
     const filePath = path.join(outputDir, fileName);
     fs.writeFileSync(filePath, pdfBuffer);
 
