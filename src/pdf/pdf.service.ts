@@ -37,10 +37,6 @@ export class PdfService {
     
       return productList;
     });
-    
-    // Handlebars.registerHelper('eq', function (a, b) {
-    //   return a === b;
-    // });
 
     const productEOLStatus: { product: string; eolDate: string; supportStatus: string }[] = [];
     const duplicates = new Set();
