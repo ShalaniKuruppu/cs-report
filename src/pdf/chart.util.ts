@@ -3,7 +3,7 @@ import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
 import { ChartConfiguration, ChartTypeRegistry } from 'chart.js';
 
 const width = 2400;
-const height = 400;
+const height = 1200;
 const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
 interface ProductSeries {
   label: string;
@@ -15,6 +15,7 @@ export async function generateLineChart(monthlyCounts: any[]): Promise<string> {
   const labels = monthlyCounts.map((entry) => entry.yearAndMonth).reverse();
   const incidents = monthlyCounts.map((entry) => entry.counts.incidentCount).reverse();
   const queries = monthlyCounts.map((entry) => entry.counts.queryCount).reverse();
+  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 2400, height: 1700 });
 
   const config: ChartConfiguration<'line'> = {
     type: 'line',
@@ -41,14 +42,7 @@ export async function generateLineChart(monthlyCounts: any[]): Promise<string> {
         },
       ],
     },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: 'Monthly Case Volume',
-        },
-      },
-    },
+   
   };
 
   const buffer = await chartJSNodeCanvas.renderToBuffer(config);
