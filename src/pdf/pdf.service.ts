@@ -133,7 +133,6 @@ function generateMonthLabels(startDate: Date, endDate: Date): string[] {
     months.push(label);
     current.setMonth(current.getMonth() + 1);
   }
-
   return months;
 }
 
