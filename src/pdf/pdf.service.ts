@@ -106,7 +106,7 @@ const createdVsResolvedChart = await generateGroupedBarChart(
 // Cases by Deployment Pie Chart
 const casesByEnvironment = data.casesRecords.reduce((acc: any, caseData: any) => {
   const deployment = caseData.deployment;
-  if (deployment) {
+  if (deployment && deployment !== "N/A") {
     acc[deployment] = (acc[deployment] || 0) + 1;
   }
   return acc;
