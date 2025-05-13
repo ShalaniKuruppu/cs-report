@@ -57,36 +57,20 @@ export class PdfService {
         }
       }
 }
-    // Extract and summarize current products usage (e.g., cores, TPS, etc.)
+    // Extract and summarize current products usage (product and cores)
 const currentProductSummaries: { label: string; value: string }[] = [];
-const productMap = new Map<string, { cores: number; label: string }>();
 
 for (const env of data.projectDeployments || []) {
   for (const p of env.products || []) {
-    if (p.name && p.cores && !isNaN(Number(p.cores))) {
-      const label = p.name;
-      const key = label;
-      const prev = productMap.get(key) || { cores: 0, label };
-      productMap.set(key, {
-        label,
-        cores: prev.cores + Number(p.cores),
-      });
-    }
-    if (p.name?.includes("Gateway") && p.tps) {
+    if (p.name && p.cores) {
       currentProductSummaries.push({
         label: p.name,
-        value: `Transactional Cap of ${p.tps}M`,
-      });
+        value: `${p.cores} Cores`,
+      })
     }
   }
 }
 
-for (const { label, cores } of productMap.values()) {
-  currentProductSummaries.push({
-    label,
-    value: `${cores} Cores`,
-  });
-}
 // Chart generation logic for Created vs Resolved Cases
 const createdCases = data.casesRecords.filter((caseData: any) => caseData.caseState === 'Open').length;
 console.log('Created Cases:', createdCases);
