@@ -237,7 +237,7 @@ const logoDataUri = `data:image/png;base64,${logoBase64}`;
       slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
       projectDeployments: Array.isArray(data?.projectDeployments) ? data.projectDeployments : [],
       lineChartImage: new Handlebars.SafeString(`<img src="${chartImage}" alt="Monthly Case Volume Chart"
-       style="width: 100%; height: 100%; max-height: 95vh; object-fit: contain;" />`),
+       style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />`),
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
       productEOLStatus ,
