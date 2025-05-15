@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
-import * as path from 'path'; 
-import * as fs from 'fs';
-import * as Handlebars from 'handlebars';
+import path from 'path'; 
+import fs from 'fs';
+import Handlebars from 'handlebars';
 import { generateLineChart, generatePieChart, generateGroupedBarChart } from './chart.util';
-
 
 @Injectable()
 export class PdfService {
@@ -52,7 +51,7 @@ export class PdfService {
           });
         }
       }
-}
+   }
     // Extract and summarize current products usage (product and cores)
 const currentProductSummaries: { label: string; value: string }[] = [];
 
