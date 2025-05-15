@@ -1,21 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
-import path from 'path';
-import fs from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 import Handlebars from 'handlebars';
 import {
   generateLineChart,
   generatePieChart,
   generateGroupedBarChart,
 } from './Utils/chart.util';
+import { CSReportData,CaseRecordDetail,SlaStats,ProjectDeployment,MonthlyCount } from './types'; 
+
 
 @Injectable()
 export class PdfService {
-  async generateCSReport(data: any): Promise<string> {
+  async generateCSReport(data: CSReportData): Promise<string> {
     try {
       const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
       const page = await browser.newPage();
-
+      
+      Handlebars.registerHelper('uniqueProducts', function (deployments: ProjectDeployment[]) {
+        const productList: string[] = [];
+        deployments?.forEach(env => {
+          env.products?.forEach(p => {
+            if (!productList.includes(p.name)) {
+              productList.push(p.name);
+            }
+          });
+        });
+        return productList;
+      });
+      
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
@@ -53,7 +67,7 @@ export class PdfService {
     return `data:image/png;base64,${logoBase64}`;
   }
 
-  private extractProductEOLStatus(deployments: any[]): any[] {
+  private extractProductEOLStatus(deployments: ProjectDeployment[]): { product: string; eolDate: string; supportStatus: string }[] {
     const status: { product: string; eolDate: string; supportStatus: string }[] = [];
     const seen = new Set();
     for (const env of deployments || []) {
@@ -72,7 +86,7 @@ export class PdfService {
     return status;
   }
 
-  private extractProductSummaries(deployments: any[]): any[] {
+  private extractProductSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
     const summaries: { label: string; value: string }[] = [];
     for (const env of deployments || []) {
       for (const p of env.products || []) {
@@ -108,7 +122,7 @@ export class PdfService {
     };
   }
 
-  private async generateCreatedVsResolvedChart(records: any[]): Promise<string> {
+  private async generateCreatedVsResolvedChart(records: CaseRecordDetail[]): Promise<string> {
     const counts = new Map<string, { Open: number; Closed: number }>();
     for (const record of records || []) {
       const day = record.opened?.split(' ')[0];
@@ -128,7 +142,7 @@ export class PdfService {
     ], 'Created vs Resolved Cases', { chartType: 'state' });
   }
 
-  private async generateCasesByEnvironmentChart(records: any[]): Promise<string> {
+  private async generateCasesByEnvironmentChart(records: CaseRecordDetail[]): Promise<string>{
     const envCounts: Record<string, number> = {};
     for (const record of records || []) {
       const deployment = record.deployment;
@@ -139,7 +153,7 @@ export class PdfService {
     return generatePieChart(Object.keys(envCounts), Object.values(envCounts));
   }
 
-  private async generateCreatedByProductChart(records: any[]): Promise<string> {
+  private async generateCreatedByProductChart(records: CaseRecordDetail[]): Promise<string> {
     const monthMap: Record<string, Record<string, number>> = {};
     for (const r of records || []) {
       const date = new Date(r.opened);
@@ -160,7 +174,7 @@ export class PdfService {
     return generateGroupedBarChart(months, productSeries, 'Cases Created by Product', { chartType: 'product' });
   }
 
-  private async generateIncidentByPriorityChart(records: any[]): Promise<string> {
+  private async generateIncidentByPriorityChart(records: CaseRecordDetail[]): Promise<string> {
     const monthMap = new Map<string, Record<string, number>>();
     for (const record of records || []) {
       const rawDate = record.opened?.split(' ')[0];
