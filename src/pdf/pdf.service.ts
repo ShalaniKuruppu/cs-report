@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer';
 import path from 'path'; 
 import fs from 'fs';
 import Handlebars from 'handlebars';
-import { generateLineChart, generatePieChart, generateGroupedBarChart } from './chart.util';
+import { generateLineChart, generatePieChart, generateGroupedBarChart } from './Utils/chart.util';
 
 @Injectable()
 export class PdfService {
