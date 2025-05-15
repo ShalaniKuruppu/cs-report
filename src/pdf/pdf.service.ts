@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
-import * as path from 'path';
+import puppeteer from 'puppeteer';
+import * as path from 'path'; 
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
 import { generateLineChart, generatePieChart, generateGroupedBarChart } from './chart.util';
