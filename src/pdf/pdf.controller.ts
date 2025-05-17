@@ -5,7 +5,7 @@ import { Controller, Post, Res, Body } from '@nestjs/common';
 import { Response } from 'express';
 import { PdfService } from './pdf.service';
 
-@Controller('pdf')
+@Controller()
 export class PdfController {
   constructor(private readonly pdfService: PdfService) {}
 
