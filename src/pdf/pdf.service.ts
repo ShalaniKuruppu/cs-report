@@ -98,7 +98,7 @@ export class PdfService {
     return summaries;
   }
 
-  private async generateCharts(data: any): Promise<Record<string, string>> {
+  private async generateCharts(data: CSReportData): Promise<Record<string, string>> {
     const [
       lineChartImage,
       createdVsResolvedChart,
@@ -194,13 +194,18 @@ export class PdfService {
     }));
     return generateGroupedBarChart(months, prioritySeries, 'Incident Created by Priority (Monthly)', { chartType: 'priority' });
   }
+  // add a method to filter engagements from casesrecords
+  private filterEngagementCases(records: CaseRecordDetail[] = []): CaseRecordDetail[] {
+  return records.filter((record) => record.caseType === 'Engagement');
+}
 
   private prepareContext(data: any, charts: Record<string, string>, eolStatus: any[], productSummaries: any[], logo: string) {
     return {
       ...data.subscriptionDetails,
       casesRecords: Array.isArray(data?.casesRecords) ? data.casesRecords : [],
       slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
-      projectDeployments: Array.isArray(data?.projectDeployments) ? data.projectDeployments : [],
+      engagementRecords: this.filterEngagementCases(Array.isArray(data?.casesRecords) ? data.casesRecords : []),
+      projectDeployments: data?.projectDeployments || {},
       lineChartImage: new Handlebars.SafeString(`<img src="${charts.lineChartImage}" alt="Monthly Case Volume Chart" style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />`),
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
