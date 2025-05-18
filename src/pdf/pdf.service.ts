@@ -199,10 +199,9 @@ export class PdfService {
   return records.filter((record) => record.caseType === 'Engagement');
 }
 
-  private prepareContext(data: any, charts: Record<string, string>, eolStatus: any[], productSummaries: any[], logo: string) {
+  private prepareContext(data: CSReportData, charts: Record<string, string>, eolStatus: any[], productSummaries: any[], logo: string) {
     return {
       ...data.subscriptionDetails,
-      casesRecords: Array.isArray(data?.casesRecords) ? data.casesRecords : [],
       slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
       engagementRecords: this.filterEngagementCases(Array.isArray(data?.casesRecords) ? data.casesRecords : []),
       projectDeployments: data?.projectDeployments || {},
