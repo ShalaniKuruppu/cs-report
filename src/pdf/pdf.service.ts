@@ -74,8 +74,8 @@ export class PdfService {
       }
     }
   }
-  return Array.from(productSet);
-}
+  return productSet.size > 0 ? Array.from(productSet) : ['N/A'];
+ }
 
   private async generateCharts(data: CSReportData): Promise<Record<string, string>> {
     const [
