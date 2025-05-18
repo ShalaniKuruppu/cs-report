@@ -17,25 +17,14 @@ export class PdfService {
       const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
       const page = await browser.newPage();
       
-      Handlebars.registerHelper('uniqueProducts', function (deployments: ProjectDeployment[]) {
-        const productList: string[] = [];
-        deployments?.forEach(env => {
-          env.products?.forEach(p => {
-            if (!productList.includes(p.name)) {
-              productList.push(p.name);
-            }
-          });
-        });
-        return productList;
-      });
-      
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
       const productCoreDetails = this.productCoreSummaries(data.projectDeployments);
       const engagementData = this.filterEngagementCases(data.casesRecords);
+      const uniqueProducts = this.getUniqueProductNames(data.projectDeployments);
 
-      const context = this.prepareContext(data, charts, productCoreDetails, logoDataUri,engagementData);
+      const context = this.prepareContext(data, charts, productCoreDetails, logoDataUri,engagementData,uniqueProducts);
       const renderedHtml = template(context);
 
       await page.setContent(renderedHtml, { waitUntil: 'networkidle0' });
@@ -77,6 +66,18 @@ export class PdfService {
     }
     return summaries;
   }
+  
+  private getUniqueProductNames(deployments: ProjectDeployment[] = []): string[] {
+  const productSet = new Set<string>();
+  for (const env of deployments) {
+    for (const product of env.products || []) {
+      if (product.name) {
+        productSet.add(product.name);
+      }
+    }
+  }
+  return Array.from(productSet);
+}
 
   private async generateCharts(data: CSReportData): Promise<Record<string, string>> {
     const [
@@ -179,7 +180,7 @@ export class PdfService {
   return records.filter((record) => record.caseType === 'Engagement');
 }
 
-  private prepareContext(data: CSReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[]) {
+  private prepareContext(data: CSReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[],uniqueProducts: string[]) {
     return {
       subscriptionDetails: data.subscriptionDetails,
       slaRecords : data?.slaDetails?.slaRecords || [],
@@ -189,6 +190,7 @@ export class PdfService {
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
       productCoreDetails: productSummaries,
+      uniqueProducts,
       createdVsResolvedChart: charts.createdVsResolvedChart,
       casesByEnvironmentChart: charts.casesByEnvironmentChart,
       createdByProductChart: charts.createdByProductChart,

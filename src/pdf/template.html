@@ -293,29 +293,24 @@
           <th style="padding: 14px; font-size: 16px; background-color: #ff7300; color: white;">Query Hours</th>
         </tr>
       </thead>
-      <tbody>
-        {{#with (uniqueProducts projectDeployments) as |products|}}
-        {{#each products}}
-          <tr>
-            <td style="padding: 12px; font-size: 15px;">{{this}}</td>
-      
-            {{#if @first}}
-              <td rowspan="{{products.length}}" style="padding: 12px; font-size: 15px; text-align: center;">
-                ${{@root.subscriptionDetails.subscription}}
-              </td>
-              <td rowspan="{{products.length}}" style="padding: 12px; font-size: 15px;">
-                {{@root.subscriptionDetails.totalQueryHours}}<br />
-                <span style="font-size: 12px; text-align: center;">({{@root.consumedQueryHours}} Utilized)</span>
-              </td>
-            {{/if}}
-          </tr>
-        {{/each}}
-      {{/with}}
-      
-      </tbody>
+    <tbody>
+    {{#each uniqueProducts}}
+      <tr>
+        <td style="padding: 12px; font-size: 15px;">{{this}}</td>
+        {{#if @first}}
+          <td rowspan="{{../uniqueProducts.length}}" style="padding: 12px; font-size: 15px; text-align: center;">
+            ${{../subscriptionDetails.subscription}}
+          </td>
+          <td rowspan="{{../uniqueProducts.length}}" style="padding: 12px; font-size: 15px;">
+            {{../subscriptionDetails.totalQueryHours}}<br />
+            <span style="font-size: 12px; text-align: center;">({{../subscriptionDetails.consumedQueryHours}} Utilized)</span>
+          </td>
+        {{/if}}
+      </tr>
+    {{/each}}
+    </tbody>
     </table>
-    
-    
+        
   </div>
   <div class="section">
     <h2 style="color: #ff7300; font-size: 25px;">Current Products In Use</h2>
@@ -368,7 +363,6 @@
   
 <div class="section">
   <h2 style="color: #ff7300; font-size: 28px;">Cases </h2>
-  
   <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
     
     <!-- Created vs Resolved Cases Chart -->
