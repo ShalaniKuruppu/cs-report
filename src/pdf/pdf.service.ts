@@ -15,15 +15,13 @@ export class PdfService {
   async generateCSReport(data: CSReportData): Promise<string> {
     try {
       const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
-      const page = await browser.newPage();
-      
+      const page = await browser.newPage();  
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
       const productCoreDetails = this.productCoreSummaries(data.projectDeployments);
       const engagementData = this.filterEngagementCases(data.casesRecords);
       const uniqueProducts = this.getUniqueProductNames(data.projectDeployments);
-
       const context = this.prepareContext(data, charts, productCoreDetails, logoDataUri,engagementData,uniqueProducts);
       const renderedHtml = template(context);
 
