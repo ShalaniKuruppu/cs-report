@@ -10,7 +10,6 @@ import {
 } from './Utils/chart.util';
 import { CSReportData,CaseRecordDetail,SlaStats,ProjectDeployment,MonthlyCount } from './types'; 
 
-
 @Injectable()
 export class PdfService {
   async generateCSReport(data: CSReportData): Promise<string> {
