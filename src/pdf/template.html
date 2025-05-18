@@ -234,7 +234,7 @@
   <!-- Front Page -->
   <div class="front-page">
     <img src="{{logo}}" alt="Logo" class="front-page-logo" />
-    <h1>{{accountName}} - Customer Success Report</h1>
+    <h1>{{subscriptionDetails.accountName}} - Customer Success Report</h1>
     <p>Accelerating Success Together</p>
     <hr class="section-divider" />
     <p class="current-date">Generated on: {{generatedDate}}</p>
@@ -261,27 +261,27 @@
      <div class="subscription-details">
       <div class = "detail-item">
         <strong>Project Name</strong>
-        <div class = "data-info">{{projectName}}</div>
+        <div class = "data-info">{{subscriptionDetails.projectName}}</div>
       </div>
       <div class = "detail-item">
         <strong>Project Key</strong>
-        <div class = "data-info">{{projectKey}}</div>
+        <div class = "data-info">{{subscriptionDetails.projectKey}}</div>
       </div>
       <div class = "detail-item">
         <strong>Project Type</strong>
-        <div class = "data-info">{{projectType}}</div>
+        <div class = "data-info">{{subscriptionDetails.projectType}}</div>
       </div>
       <div class = "detail-item">
         <strong>Support Tier</strong>
-        <div class = "data-info">{{supportTier}}</div>
+        <div class = "data-info">{{subscriptionDetails.supportTier}}</div>
       </div>
       <div class = "detail-item">
         <strong>Subscription Start Date</strong>
-        <div class = "data-info">{{startDate}}</div>
+        <div class = "data-info">{{subscriptionDetails.startDate}}</div>
       </div>
       <div class = "detail-item">
         <strong>Subscription End Date</strong>
-        <div class = "data-info">{{endDate}}</div>
+        <div class = "data-info">{{subscriptionDetails.endDate}}</div>
       </div>
 
      </div>
@@ -301,10 +301,10 @@
       
             {{#if @first}}
               <td rowspan="{{products.length}}" style="padding: 12px; font-size: 15px; text-align: center;">
-                ${{@root.subscription}}
+                ${{@root.subscriptionDetails.subscription}}
               </td>
               <td rowspan="{{products.length}}" style="padding: 12px; font-size: 15px;">
-                {{@root.totalQueryHours}}<br />
+                {{@root.subscriptionDetails.totalQueryHours}}<br />
                 <span style="font-size: 12px; text-align: center;">({{@root.consumedQueryHours}} Utilized)</span>
               </td>
             {{/if}}

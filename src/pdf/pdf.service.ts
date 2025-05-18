@@ -33,11 +33,11 @@ export class PdfService {
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
-      const productEOLStatus = this.extractProductEOLStatus(data.projectDeployments);
+      //const productEolStatus = this.extractProductEolStatus(data.projectDeployments);
       const currentProductSummaries = this.extractProductSummaries(data.projectDeployments);
       const engagementData = this.filterEngagementCases(data.casesRecords);
 
-      const context = this.prepareContext(data, charts, productEOLStatus, currentProductSummaries, logoDataUri,engagementData);
+      const context = this.prepareContext(data, charts, currentProductSummaries, logoDataUri,engagementData);
       const renderedHtml = template(context);
 
       await page.setContent(renderedHtml, { waitUntil: 'networkidle0' });
@@ -68,24 +68,24 @@ export class PdfService {
     return `data:image/png;base64,${logoBase64}`;
   }
 
-  private extractProductEOLStatus(deployments: ProjectDeployment[]): { product: string; eolDate: string; supportStatus: string }[] {
-    const status: { product: string; eolDate: string; supportStatus: string }[] = [];
-    const seen = new Set();
-    for (const env of deployments || []) {
-      for (const p of env.products || []) {
-        const key = `${p.name} v${p.version}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          status.push({
-            product: key,
-            eolDate: p.eolDate ? new Date(p.eolDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : '—',
-            supportStatus: p.supportStatus || 'Unknown',
-          });
-        }
-      }
-    }
-    return status;
-  }
+  // private extractProductEolStatus(deployments: ProjectDeployment[]): { product: string; eolDate: string; supportStatus: string }[] {
+  //   const status: { product: string; eolDate: string; supportStatus: string }[] = [];
+  //   const seen = new Set();
+  //   for (const env of deployments || []) {
+  //     for (const p of env.products || []) {
+  //       const key = `${p.name} v${p.version}`;
+  //       if (!seen.has(key)) {
+  //         seen.add(key);
+  //         status.push({
+  //           product: key,
+  //           eolDate: p.eolDate ? new Date(p.eolDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : '—',
+  //           supportStatus: p.supportStatus || 'Unknown',
+  //         });
+  //       }
+  //     }
+  //   }
+  //   return status;
+  // }
 
   private extractProductSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
     const summaries: { label: string; value: string }[] = [];
@@ -200,16 +200,17 @@ export class PdfService {
   return records.filter((record) => record.caseType === 'Engagement');
 }
 
-  private prepareContext(data: CSReportData, charts: Record<string, string>, eolStatus: any[], productSummaries: any[], logo: string,engagementData : any[]) {
+  private prepareContext(data: CSReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[]) {
     return {
-      ...data.subscriptionDetails,
-      slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
+      //...data.subscriptionDetails,
+      //slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
+      subscriptionDetails: data.subscriptionDetails,
+      slaRecords : data?.slaDetails?.slaRecords || [],
       engagementRecords: engagementData,
       projectDeployments: data?.projectDeployments || {},
       lineChartImage: new Handlebars.SafeString(`<img src="${charts.lineChartImage}" alt="Monthly Case Volume Chart" style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />`),
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
-      productEOLStatus: eolStatus,
       currentProductSummaries: productSummaries,
       createdVsResolvedChart: charts.createdVsResolvedChart,
       casesByEnvironmentChart: charts.casesByEnvironmentChart,
