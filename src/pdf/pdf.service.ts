@@ -35,8 +35,9 @@ export class PdfService {
       const charts = await this.generateCharts(data);
       const productEOLStatus = this.extractProductEOLStatus(data.projectDeployments);
       const currentProductSummaries = this.extractProductSummaries(data.projectDeployments);
+      const engagementData = this.filterEngagementCases(data.casesRecords);
 
-      const context = this.prepareContext(data, charts, productEOLStatus, currentProductSummaries, logoDataUri);
+      const context = this.prepareContext(data, charts, productEOLStatus, currentProductSummaries, logoDataUri,engagementData);
       const renderedHtml = template(context);
 
       await page.setContent(renderedHtml, { waitUntil: 'networkidle0' });
@@ -199,11 +200,11 @@ export class PdfService {
   return records.filter((record) => record.caseType === 'Engagement');
 }
 
-  private prepareContext(data: CSReportData, charts: Record<string, string>, eolStatus: any[], productSummaries: any[], logo: string) {
+  private prepareContext(data: CSReportData, charts: Record<string, string>, eolStatus: any[], productSummaries: any[], logo: string,engagementData : any[]) {
     return {
       ...data.subscriptionDetails,
       slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
-      engagementRecords: this.filterEngagementCases(Array.isArray(data?.casesRecords) ? data.casesRecords : []),
+      engagementRecords: engagementData,
       projectDeployments: data?.projectDeployments || {},
       lineChartImage: new Handlebars.SafeString(`<img src="${charts.lineChartImage}" alt="Monthly Case Volume Chart" style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />`),
       generatedDate: new Date().toISOString().split('T')[0],
