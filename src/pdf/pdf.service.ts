@@ -33,10 +33,10 @@ export class PdfService {
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
-      const currentProductSummaries = this.extractProductSummaries(data.projectDeployments);
+      const productCoreDetails = this.productCoreSummaries(data.projectDeployments);
       const engagementData = this.filterEngagementCases(data.casesRecords);
 
-      const context = this.prepareContext(data, charts, currentProductSummaries, logoDataUri,engagementData);
+      const context = this.prepareContext(data, charts, productCoreDetails, logoDataUri,engagementData);
       const renderedHtml = template(context);
 
       await page.setContent(renderedHtml, { waitUntil: 'networkidle0' });
@@ -67,7 +67,7 @@ export class PdfService {
     return `data:image/png;base64,${logoBase64}`;
   }
 
-  private extractProductSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
+  private productCoreSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
     const summaries: { label: string; value: string }[] = [];
     for (const env of deployments || []) {
       for (const p of env.products || []) {
@@ -186,10 +186,10 @@ export class PdfService {
       slaRecords : data?.slaDetails?.slaRecords || [],
       engagementRecords: engagementData,
       projectDeployments: data?.projectDeployments || {},
-      lineChartImage: new Handlebars.SafeString(`<img src="${charts.lineChartImage}" alt="Monthly Case Volume Chart" style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />`),
+      lineChartImage: charts.lineChartImage,
       generatedDate: new Date().toISOString().split('T')[0],
       slaPerformanceStats: data?.slaDetails?.slaPerformanceStats || {},
-      currentProductSummaries: productSummaries,
+      productCoreDetails: productSummaries,
       createdVsResolvedChart: charts.createdVsResolvedChart,
       casesByEnvironmentChart: charts.casesByEnvironmentChart,
       createdByProductChart: charts.createdByProductChart,
