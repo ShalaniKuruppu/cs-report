@@ -202,8 +202,6 @@ export class PdfService {
 
   private prepareContext(data: CSReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[]) {
     return {
-      //...data.subscriptionDetails,
-      //slaRecords: Array.isArray(data?.slaDetails?.slaRecords) ? data.slaDetails.slaRecords : [],
       subscriptionDetails: data.subscriptionDetails,
       slaRecords : data?.slaDetails?.slaRecords || [],
       engagementRecords: engagementData,
