@@ -33,7 +33,6 @@ export class PdfService {
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
-      //const productEolStatus = this.extractProductEolStatus(data.projectDeployments);
       const currentProductSummaries = this.extractProductSummaries(data.projectDeployments);
       const engagementData = this.filterEngagementCases(data.casesRecords);
 
@@ -67,25 +66,6 @@ export class PdfService {
     const logoBase64 = fs.readFileSync(logoImagePath, { encoding: 'base64' });
     return `data:image/png;base64,${logoBase64}`;
   }
-
-  // private extractProductEolStatus(deployments: ProjectDeployment[]): { product: string; eolDate: string; supportStatus: string }[] {
-  //   const status: { product: string; eolDate: string; supportStatus: string }[] = [];
-  //   const seen = new Set();
-  //   for (const env of deployments || []) {
-  //     for (const p of env.products || []) {
-  //       const key = `${p.name} v${p.version}`;
-  //       if (!seen.has(key)) {
-  //         seen.add(key);
-  //         status.push({
-  //           product: key,
-  //           eolDate: p.eolDate ? new Date(p.eolDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : '—',
-  //           supportStatus: p.supportStatus || 'Unknown',
-  //         });
-  //       }
-  //     }
-  //   }
-  //   return status;
-  // }
 
   private extractProductSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
     const summaries: { label: string; value: string }[] = [];
