@@ -175,7 +175,7 @@ export class PdfService {
     }));
     return generateGroupedBarChart(months, prioritySeries, 'Incident Created by Priority (Monthly)', { chartType: 'priority' });
   }
-  // add a method to filter engagements from casesrecords
+
   private filterEngagementCases(records: CaseRecordDetail[] = []): CaseRecordDetail[] {
   return records.filter((record) => record.caseType === 'Engagement');
 }
