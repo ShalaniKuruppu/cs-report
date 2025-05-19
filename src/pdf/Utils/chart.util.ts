@@ -2,20 +2,19 @@
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
 import { ChartConfiguration, ChartTypeRegistry } from 'chart.js';
 
-const width = 2400;
-const height = 1200;
-const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
 interface ProductSeries {
   label: string;
   data: number[];
 }
 
+const getCanvas = (width = 2400, height = 1200): ChartJSNodeCanvas =>
+  new ChartJSNodeCanvas({ width, height });
 
 export async function generateLineChart(monthlyCounts: any[]): Promise<string> {
   const labels = monthlyCounts.map((entry) => entry.yearAndMonth).reverse();
   const incidents = monthlyCounts.map((entry) => entry.counts.incidentCount).reverse();
   const queries = monthlyCounts.map((entry) => entry.counts.queryCount).reverse();
-  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 2400, height: 1700 });
+  const canvas = getCanvas(2400, 1700);
 
   const config: ChartConfiguration<'line'> = {
     type: 'line',
@@ -45,10 +44,9 @@ export async function generateLineChart(monthlyCounts: any[]): Promise<string> {
    
   };
 
-  const buffer = await chartJSNodeCanvas.renderToBuffer(config);
+  const buffer = await canvas.renderToBuffer(config);
   return `data:image/png;base64,${buffer.toString('base64')}`;
 }
-
 
 export async function generateGroupedBarChart(
   labels: string[],
@@ -65,10 +63,7 @@ export async function generateGroupedBarChart(
     "#25AAE1", "#3EB5E5", "#57C0E9", "#2299CC",
     "#1F84A6", "#1A6D8B", "#70CBED", "#FFD166"
   ];
-   // Dynamic width: 100px per label, minimum 800px
-   const width = Math.max(labels.length , 800);
-   const height = 200;
-   const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
+   const canvas = getCanvas(Math.max(labels.length, 800), 200);
 
   // Define custom color logic by chart type
   let datasets: any[] = [];
@@ -165,11 +160,12 @@ export async function generateGroupedBarChart(
     },
   };
 
-  const buffer = await chartJSNodeCanvas.renderToBuffer(config);
+  const buffer = await canvas.renderToBuffer(config);
   return `data:image/png;base64,${buffer.toString("base64")}`;
 }
 
 export async function generatePieChart(labels: string[], data: number[]): Promise<string> {
+  const canvas = getCanvas(2400, 1200);
   const config: ChartConfiguration<'pie'> = {
     type: 'pie',
     data: {
@@ -195,7 +191,6 @@ export async function generatePieChart(labels: string[], data: number[]): Promis
       responsive: true,
     },
   };
-
-  const buffer = await chartJSNodeCanvas.renderToBuffer(config);
+  const buffer = await canvas.renderToBuffer(config);
   return `data:image/png;base64,${buffer.toString('base64')}`;
 }
