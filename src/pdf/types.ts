@@ -1,4 +1,5 @@
-export interface CSReportData {
+// This file contains the types used in the csreport-pdf 
+export interface csReportData {
   subscriptionDetails: SubscriptionDetail;
   casesRecords: CaseRecordDetail[];
   slaDetails: SlaStats;
@@ -6,8 +7,7 @@ export interface CSReportData {
   monthlyCounts: MonthlyCount[];
 }
 
-// ─────────── Subscription Info ───────────
-
+//subscription details
 export interface SubscriptionDetail {
   projectName: string;
   projectKey: string;
@@ -21,44 +21,45 @@ export interface SubscriptionDetail {
   consumedQueryHours: string;
 }
 
-// ─────────── SLA Info ───────────
-
+//sla details
 export interface SlaStats {
   slaRecords: SlaRecordDetail[];
   slaPerformanceStats: SlaPerformanceStats;
 }
 
+//sla record details
 export interface SlaRecordDetail {
   task: string;
   slaDefinition: string;
   businessElapsedPercentage: string;
 }
 
+//sla performance stats
 export interface SlaPerformanceStats {
   Workaround: SlaStatsDetail;
   Resolution: SlaStatsDetail;
   Response: SlaStatsDetail;
 }
 
+//sla stats detail
 export interface SlaStatsDetail {
   fraction: string | number;
   percentage: string;
 }
 
-// ─────────── Monthly Counts ───────────
-
+//monthly counts of incidents and queries
 export interface MonthlyCount {
   yearAndMonth: string;
   counts: Count;
 }
 
+// number of incidents and queries
 export interface Count {
   incidentCount: number;
   queryCount: number;
 }
 
-// ─────────── Case Records ───────────
-
+//case record details
 export interface CaseRecordDetail {
   caseSysId: string;
   caseNumber: string;
@@ -73,13 +74,13 @@ export interface CaseRecordDetail {
   productName: string;
 }
 
-// ─────────── Project Deployments ───────────
-
+//project deployments details
 export interface ProjectDeployment {
   name: string;
   products: Product[];
 }
 
+//product details
 export interface Product {
   name: string;
   version: string;

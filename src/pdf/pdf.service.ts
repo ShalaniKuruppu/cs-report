@@ -3,16 +3,12 @@ import puppeteer from 'puppeteer';
 import * as path from 'path';
 import * as fs from 'fs';
 import Handlebars from 'handlebars';
-import {
-  generateLineChart,
-  generatePieChart,
-  generateGroupedBarChart,
-} from './Utils/chart.util';
-import { CSReportData,CaseRecordDetail,SlaStats,ProjectDeployment,MonthlyCount } from './types'; 
+import { generateLineChart, generatePieChart, generateGroupedBarChart} from './Utils/chart.util';
+import { csReportData,CaseRecordDetail,ProjectDeployment } from './types'; 
 
 @Injectable()
 export class PdfService {
-  async generateCSReport(data: CSReportData): Promise<string> {
+  async generateCSReport(data: csReportData): Promise<string> {
     try {
       const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
       const page = await browser.newPage();  
@@ -77,7 +73,7 @@ export class PdfService {
   return productSet.size > 0 ? Array.from(productSet) : ['N/A'];
  }
 
-  private async generateCharts(data: CSReportData): Promise<Record<string, string>> {
+  private async generateCharts(data: csReportData): Promise<Record<string, string>> {
     const [
       lineChartImage,
       createdVsResolvedChart,
@@ -178,7 +174,7 @@ export class PdfService {
   return records.filter((record) => record.caseType === 'Engagement');
 }
 
-  private prepareContext(data: CSReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[],uniqueProducts: string[]) {
+  private prepareContext(data: csReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[],uniqueProducts: string[]) {
     return {
       subscriptionDetails: data.subscriptionDetails,
       slaRecords : data?.slaDetails?.slaRecords || [],
