@@ -8,6 +8,7 @@ import { csReportData,CaseRecordDetail,ProjectDeployment } from './types';
 
 @Injectable()
 export class PdfService {
+  //Main method to generate the Customer Success PDF report
   async generateCSReport(data: csReportData): Promise<string> {
     try {
       const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
@@ -18,9 +19,12 @@ export class PdfService {
       const productCoreDetails = this.productCoreSummaries(data.projectDeployments);
       const engagementData = this.filterEngagementCases(data.casesRecords);
       const uniqueProducts = this.getUniqueProductNames(data.projectDeployments);
+
+      // Prepare HTML context and render using Handlebars
       const context = this.prepareContext(data, charts, productCoreDetails, logoDataUri,engagementData,uniqueProducts);
       const renderedHtml = template(context);
 
+      // Set page content and generate PDF
       await page.setContent(renderedHtml, { waitUntil: 'networkidle0' });
       const pdfBuffer = await page.pdf({
         format: 'A5',
@@ -36,19 +40,21 @@ export class PdfService {
       throw err;
     }
   }
-
+  // Load the HTML template for the PDF
   private loadTemplate(): Handlebars.TemplateDelegate {
     const templatePath = path.resolve(__dirname, '../../src/pdf/template.html');
     const rawHtml = fs.readFileSync(templatePath, 'utf8');
     return Handlebars.compile(rawHtml);
   }
 
+  // Load the logo image and convert it to a base64 data URI
   private loadLogo(): string {
     const logoImagePath = path.join(__dirname, '../../src/pdf/images/wso2-logo-orange.png');
     const logoBase64 = fs.readFileSync(logoImagePath, { encoding: 'base64' });
     return `data:image/png;base64,${logoBase64}`;
   }
 
+  // Generate product core summaries of the products
   private productCoreSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
     const summaries: { label: string; value: string }[] = [];
     for (const env of deployments || []) {
@@ -61,6 +67,7 @@ export class PdfService {
     return summaries;
   }
   
+  // Get unique product names from deployments
   private getUniqueProductNames(deployments: ProjectDeployment[] = []): string[] {
   const productSet = new Set<string>();
   for (const env of deployments) {
@@ -73,6 +80,7 @@ export class PdfService {
   return productSet.size > 0 ? Array.from(productSet) : ['N/A'];
  }
 
+  // Generate charts for the report
   private async generateCharts(data: csReportData): Promise<Record<string, string>> {
     const [
       lineChartImage,
@@ -170,10 +178,12 @@ export class PdfService {
     return generateGroupedBarChart(months, prioritySeries, 'Incident Created by Priority (Monthly)', { chartType: 'priority' });
   }
 
+  // Filter engagement cases from the case records
   private filterEngagementCases(records: CaseRecordDetail[] = []): CaseRecordDetail[] {
   return records.filter((record) => record.caseType === 'Engagement');
 }
 
+// Prepare the context for the Handlebars template
   private prepareContext(data: csReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[],uniqueProducts: string[]) {
     return {
       subscriptionDetails: data.subscriptionDetails,
@@ -193,6 +203,7 @@ export class PdfService {
     };
   }
 
+  // Save the generated PDF to the filesystem
   private savePdf(buffer: Buffer, projectKey: string): string {
     const outputDir = path.join(__dirname, '../../generated');
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
