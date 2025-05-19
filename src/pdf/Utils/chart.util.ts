@@ -7,6 +7,13 @@
 
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
 import { ChartConfiguration } from 'chart.js';
+import {
+  DEFAULT_CHART_COLORS,
+  GREY_COLOR,
+  PRODUCT_COLOR_MAP,
+  STATE_COLOR_MAP,
+  PIE_CHART_COLORS,
+} from '../constants';
 
 interface ProductSeries {
   label: string;
@@ -62,7 +69,7 @@ export async function generateLineChart(monthlyCounts: any[]): Promise<string> {
 }
 
 //  Generates a grouped bar chart categorized by product, priority, or state.
-
+//
 //   @param labels - X-axis labels (e.g., months or days).
 //   @param productSeries - An array of datasets to be visualized, each with a label and corresponding data array.
 //   @param title - The chart title (used for internal logic).
@@ -78,38 +85,39 @@ export async function generateGroupedBarChart(
 ): Promise<string> {
   const chartType = options?.chartType;
 
-  const greyColor = '#999999';
-  const defaultColors = [
-    '#25AAE1',
-    '#3EB5E5',
-    '#57C0E9',
-    '#2299CC',
-    '#1F84A6',
-    '#1A6D8B',
-    '#70CBED',
-    '#FFD166',
-  ];
+  // const greyColor = '#999999';
+  // const defaultColors = [
+  //   '#25AAE1',
+  //   '#3EB5E5',
+  //   '#57C0E9',
+  //   '#2299CC',
+  //   '#1F84A6',
+  //   '#1A6D8B',
+  //   '#70CBED',
+  //   '#FFD166',
+  // ];
   const canvas = getCanvas(Math.max(labels.length, 800), 200);
 
   // Define custom color logic by chart type
   let datasets: any[] = [];
 
   if (chartType === 'product') {
-    const productColors: Record<string, string> = {
-      'WSO2 API Manager': '#25AAE1',
-      'WSO2 API Manager Analytics': '#3EB5E5',
-      'WSO2 API Platform for Kubernetes': '#57C0E9',
-      Ballerina: '#2299CC',
-      'WSO2 Enterprise Integrator': '#1F84A6',
-      'WSO2 Identity Server': '#1A6D8B',
-      'WSO2 Micro Integrator': '#70CBED',
-      Unknown: greyColor,
-    };
+    // const productColors: Record<string, string> = {
+    //   'WSO2 API Manager': '#25AAE1',
+    //   'WSO2 API Manager Analytics': '#3EB5E5',
+    //   'WSO2 API Platform for Kubernetes': '#57C0E9',
+    //   Ballerina: '#2299CC',
+    //   'WSO2 Enterprise Integrator': '#1F84A6',
+    //   'WSO2 Identity Server': '#1A6D8B',
+    //   'WSO2 Micro Integrator': '#70CBED',
+    //   Unknown: greyColor,
+    // };
 
     datasets = productSeries.map((series, index) => {
       const label = series.label?.trim() || 'Unknown';
       const color =
-        productColors[label] || defaultColors[index % defaultColors.length];
+        PRODUCT_COLOR_MAP[label] ||
+        DEFAULT_CHART_COLORS[index % DEFAULT_CHART_COLORS.length];
 
       return {
         label,
@@ -125,20 +133,20 @@ export async function generateGroupedBarChart(
       data: series.data,
       backgroundColor:
         series.label === 'Unknown'
-          ? greyColor
-          : defaultColors[index % defaultColors.length],
+          ? GREY_COLOR
+          : DEFAULT_CHART_COLORS[index % DEFAULT_CHART_COLORS.length],
       borderWidth: 1,
     }));
   } else if (chartType === 'state') {
-    const stateColors: Record<string, string> = {
-      Opened: '#25AAE1',
-      Resolved: '#1A6D8B',
-    };
+    // const stateColors: Record<string, string> = {
+    //   Opened: '#25AAE1',
+    //   Resolved: '#1A6D8B',
+    // };
 
     datasets = productSeries.map((series) => ({
       label: series.label,
       data: series.data,
-      backgroundColor: stateColors[series.label] || greyColor,
+      backgroundColor: STATE_COLOR_MAP[series.label] || GREY_COLOR,
       borderWidth: 1,
     }));
   }
@@ -207,15 +215,7 @@ export async function generatePieChart(
       datasets: [
         {
           data,
-          backgroundColor: [
-            '#1F84A6',
-            '#25AAE1',
-            '#3EB5E5',
-            '#57C0E9',
-            '#70CBED',
-            '#8AD6F1',
-            '#A2E1F5',
-          ],
+          backgroundColor: PIE_CHART_COLORS,
           borderColor: '#fff',
           borderWidth: 1,
         },
