@@ -1,6 +1,6 @@
 // src/pdf/chart.util.ts
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
-import { ChartConfiguration, ChartTypeRegistry } from 'chart.js';
+import { ChartConfiguration} from 'chart.js';
 
 interface ProductSeries {
   label: string;
