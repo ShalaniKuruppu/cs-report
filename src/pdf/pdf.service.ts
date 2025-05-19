@@ -9,7 +9,7 @@ import { csReportData,CaseRecordDetail,ProjectDeployment } from './types';
 @Injectable()
 export class PdfService {
   //Main method to generate the Customer Success PDF report
-  async generateCSReport(data: csReportData): Promise<string> {
+  async generateCsReport(data: csReportData): Promise<string> {
     try {
       const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
       const page = await browser.newPage();  
