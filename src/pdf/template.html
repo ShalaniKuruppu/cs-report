@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Customer Success Report</title>
@@ -23,30 +24,37 @@
       page-break-after: always;
     }
 
-    .front-page { background-color: #212a32; }
+    .front-page {
+      background-color: #212a32;
+    }
+
     .sub-topic-page,
     .records-page,
-    .thank-page { background-color: #38434d; }
+    .thank-page {
+      background-color: #38434d;
+    }
 
     .agenda-page {
       padding: 20px;
       height: 100vh;
       box-sizing: border-box;
     }
-    
-    .front-page-logo{
+
+    .front-page-logo {
       max-width: 10%;
-      height:auto;
-      margin-top:100px;
+      height: auto;
+      margin-top: 100px;
       margin-bottom: 30px;
       margin-left: 50px;
     }
+
     .subscription-details {
-      display:grid;
+      display: grid;
       grid-template-columns: repeat(3, 1fr);
       column-gap: 100px;
       margin-top: 5px;
     }
+
     .detail-item {
       display: flex;
       flex-direction: column;
@@ -55,15 +63,17 @@
       font-size: 16px;
       padding: 10px;
     }
+
     .data-info {
       margin-left: 0px;
       font-size: 14px;
     }
+
     .with-border {
-       border-right: 1px dashed #999;
+      border-right: 1px dashed #999;
     }
 
-    .front-page h1{
+    .front-page h1 {
       font-size: 30px;
       font-weight: bold;
       margin-bottom: 5px;
@@ -91,13 +101,14 @@
     .front-page .section-divider {
       border-top: 2px solid #ff7300;
       margin-bottom: 3px;
-    }  
+    }
 
     .front-page .current-date {
       font-size: 14px;
       color: white;
       margin-left: 50px;
     }
+
     .section-divider {
       border-top: 2px solid #ff7300;
       width: 100%;
@@ -111,7 +122,7 @@
       padding-left: 0;
       list-style: none;
       position: relative;
-      }
+    }
 
     .agenda-page ul li {
       margin-bottom: 12px;
@@ -155,7 +166,8 @@
       background-color: white;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ccc;
       padding: 8px;
       text-align: left;
@@ -165,33 +177,38 @@
       background-color: #455A66;
       color: white;
     }
-    .sla-stats{
-      display:flex;
+
+    .sla-stats {
+      display: flex;
       justify-content: space-around;
       align-items: center;
       text-align: center;
       padding: 15px 0;
       flex-direction: row;
-      gap: 20px; 
+      gap: 20px;
     }
-    .sla-metric{
+
+    .sla-metric {
       background-color: #f9f9f9;
       border-radius: 8px;
       padding: 15px;
       width: 30%;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    .sla-metric h3{
+
+    .sla-metric h3 {
       font-size: 26px;
       font-weight: bold;
       color: #333;
       margin-bottom: 5px;
     }
-    .sla-metric p{
+
+    .sla-metric p {
       font-size: 14px;
       color: #666;
       margin: 0;
     }
+
     .chart {
       flex-grow: 1;
       display: flex;
@@ -202,11 +219,13 @@
     .chart img {
       width: 100%;
       height: 100%;
-      max-height: 100vh;  /* Allow it to stretch */
-      object-fit: contain; /* Maintain aspect ratio */
+      max-height: 100vh;
+      /* Allow it to stretch */
+      object-fit: contain;
+      /* Maintain aspect ratio */
       display: block;
       margin: 0 auto;
-  }
+    }
 
     .footer {
       text-align: center;
@@ -215,20 +234,22 @@
       margin-top: 50px;
       page-break-before: always;
     }
+
     .thank-page {
       background-color: #38434d;
       display: flex;
       flex-direction: column;
-      justify-content: center; 
-      align-items: center;   
+      justify-content: center;
+      align-items: center;
       min-height: 148mm;
       padding: 20px;
       box-sizing: border-box;
       page-break-after: always;
       text-align: center;
-     }
+    }
   </style>
 </head>
+
 <body>
 
   <!-- Front Page -->
@@ -258,30 +279,30 @@
 
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">Subscription Details</h2>
-     <div class="subscription-details">
-      <div class = "detail-item">
+    <div class="subscription-details">
+      <div class="detail-item">
         <strong>Project Name</strong>
-        <div class = "data-info">{{subscriptionDetails.projectName}}</div>
+        <div class="data-info">{{subscriptionDetails.projectName}}</div>
       </div>
-      <div class = "detail-item">
+      <div class="detail-item">
         <strong>Project Key</strong>
-        <div class = "data-info">{{subscriptionDetails.projectKey}}</div>
+        <div class="data-info">{{subscriptionDetails.projectKey}}</div>
       </div>
-      <div class = "detail-item">
+      <div class="detail-item">
         <strong>Project Type</strong>
-        <div class = "data-info">{{subscriptionDetails.projectType}}</div>
+        <div class="data-info">{{subscriptionDetails.projectType}}</div>
       </div>
-      <div class = "detail-item">
+      <div class="detail-item">
         <strong>Support Tier</strong>
-        <div class = "data-info">{{subscriptionDetails.supportTier}}</div>
+        <div class="data-info">{{subscriptionDetails.supportTier}}</div>
       </div>
-      <div class = "detail-item">
+      <div class="detail-item">
         <strong>Subscription Start Date</strong>
-        <div class = "data-info">{{subscriptionDetails.startDate}}</div>
+        <div class="data-info">{{subscriptionDetails.startDate}}</div>
       </div>
-      <div class = "detail-item">
+      <div class="detail-item">
         <strong>Subscription End Date</strong>
-        <div class = "data-info">{{subscriptionDetails.endDate}}</div>
+        <div class="data-info">{{subscriptionDetails.endDate}}</div>
       </div>
     </div>
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #dde6e6;">
@@ -292,39 +313,38 @@
           <th style="padding: 14px; font-size: 16px; background-color: #ff7300; color: white;">Query Hours</th>
         </tr>
       </thead>
-    <tbody>
-    {{#each uniqueProducts}}
-      <tr>
-        <td style="padding: 12px; font-size: 15px;">{{this}}</td>
-        {{#if @first}}
+      <tbody>
+        {{#each uniqueProducts}}
+        <tr>
+          <td style="padding: 12px; font-size: 15px;">{{this}}</td>
+          {{#if @first}}
           <td rowspan="{{../uniqueProducts.length}}" style="padding: 12px; font-size: 15px; text-align: center;">
             ${{../subscriptionDetails.subscription}}
           </td>
           <td rowspan="{{../uniqueProducts.length}}" style="padding: 12px; font-size: 15px;">
             {{../subscriptionDetails.totalQueryHours}}<br />
-            <span style="font-size: 12px; text-align: center;">({{../subscriptionDetails.consumedQueryHours}} Utilized)</span>
+            <span style="font-size: 12px; text-align: center;">({{../subscriptionDetails.consumedQueryHours}}
+              Utilized)</span>
           </td>
-        {{/if}}
-      </tr>
-    {{/each}}
-    </tbody>
+          {{/if}}
+        </tr>
+        {{/each}}
+      </tbody>
     </table>
-        
+
   </div>
   <div class="section">
     <h2 style="color: #ff7300; font-size: 25px;">Current Products In Use</h2>
     <div style="display: flex; gap: 40px; justify-content: center; text-align: center; margin-top: 40px;">
       {{#each productCoreDetails}}
-        <div
-          style="padding: 0 20px; min-width: 150px;"
-          {{#unless @last}}class="with-border"{{/unless}}>
-          <div style="font-size: 32px; font-weight: bold; color: #455A66; padding: auto;">{{value}}</div>
-          <div style="font-size: 18px; font-weight: 600; margin-top: 12px; padding: auto;">{{label}}</div>
-        </div>
+      <div style="padding: 0 20px; min-width: 150px;" {{#unless @last}}class="with-border" {{/unless}}>
+        <div style="font-size: 32px; font-weight: bold; color: #455A66; padding: auto;">{{value}}</div>
+        <div style="font-size: 18px; font-weight: 600; margin-top: 12px; padding: auto;">{{label}}</div>
+      </div>
       {{/each}}
     </div>
   </div>
-  
+
   <!-- Product Versions and EOL Status Widget -->
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">Product Versions and EOL Status</h2>
@@ -332,103 +352,105 @@
       Once the migration is completed, the following versions will be in production too.
       Test environment has already been completed
     </p>
-  
+
     {{#each projectDeployments}}
-      {{#if products.length}}
-        <h3 style="margin-top: 30px;">{{name}} Environment</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Support EOL Date</th>
-              <th>Current Support Status</th>
-              <th>Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each products}}
-            <tr>
-              <td>{{name}} v{{version}}</td>
-              <td>{{#if eolDate}}{{eolDate}}{{else}}N/A{{/if}}</td>
-              <td>{{supportStatus}}</td>
-              <td ></td>
-            </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      {{/if}}
+    {{#if products.length}}
+    <h3 style="margin-top: 30px;">{{name}} Environment</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Support EOL Date</th>
+          <th>Current Support Status</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each products}}
+        <tr>
+          <td>{{name}} v{{version}}</td>
+          <td>{{#if eolDate}}{{eolDate}}{{else}}N/A{{/if}}</td>
+          <td>{{supportStatus}}</td>
+          <td></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{/if}}
     {{/each}}
   </div>
-  
-<div class="section">
-  <h2 style="color: #ff7300; font-size: 28px;">Cases </h2>
-  <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-    
-    <!-- Created vs Resolved Cases Chart -->
-    <div style="width: 48%; margin-bottom: 20px;">
-      <h4>Created vs Resolved Cases</h4>
-      <div class="chart">
-        <img src="{{createdVsResolvedChart}}" alt="Created vs Resolved Cases" width="100%" />
+
+  <div class="section">
+    <h2 style="color: #ff7300; font-size: 28px;">Cases </h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+
+      <!-- Created vs Resolved Cases Chart -->
+      <div style="width: 48%; margin-bottom: 20px;">
+        <h4>Created vs Resolved Cases</h4>
+        <div class="chart">
+          <img src="{{createdVsResolvedChart}}" alt="Created vs Resolved Cases" width="100%" />
+        </div>
       </div>
-    </div>
-    
-    <!-- Cases by Environment Chart -->
-    <div style="width: 48%; margin-bottom: 20px;">
-      <h4>Cases by Deployment</h4>
-      <div class="chart">
-        <img src="{{casesByEnvironmentChart}}" alt="Cases by Environment" width="100%" />
+
+      <!-- Cases by Environment Chart -->
+      <div style="width: 48%; margin-bottom: 20px;">
+        <h4>Cases by Deployment</h4>
+        <div class="chart">
+          <img src="{{casesByEnvironmentChart}}" alt="Cases by Environment" width="100%" />
+        </div>
       </div>
-    </div>
-    
-    <!-- Created by Product Chart -->
-    <div style="width: 48%; margin-bottom: 20px;">
-      <h4>Cases Created by Product</h4>
-      <div class="chart">
-        <img src="{{createdByProductChart}}" alt="Created by Product" width="100%" />
+
+      <!-- Created by Product Chart -->
+      <div style="width: 48%; margin-bottom: 20px;">
+        <h4>Cases Created by Product</h4>
+        <div class="chart">
+          <img src="{{createdByProductChart}}" alt="Created by Product" width="100%" />
+        </div>
       </div>
-    </div>
-    
-    <!-- Incident Created by Priority Chart -->
-    <div style="width: 48%; margin-bottom: 20px;">
-      <h4>Cases Created by Priority</h4>
-      <div class="chart" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; height: 90%;">
-        <img src="{{incidentByPriorityChart}}" alt="Incident Created by Priority" width="100%" />
+
+      <!-- Incident Created by Priority Chart -->
+      <div style="width: 48%; margin-bottom: 20px;">
+        <h4>Cases Created by Priority</h4>
+        <div class="chart"
+          style="flex-grow: 1; display: flex; align-items: center; justify-content: center; height: 90%;">
+          <img src="{{incidentByPriorityChart}}" alt="Incident Created by Priority" width="100%" />
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <div class="section" style="page-break-after: auto;">
     <h2 style="color: #ff7300; font-size: 28px;">Case Volume by Quarters</h2>
     <div class="chart">
-      <img src="{{lineChartImage}}" alt="Monthly Case Volume Chart" style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />
+      <img src="{{lineChartImage}}" alt="Monthly Case Volume Chart"
+        style="width: 100%; height: 100%; max-height: 65vh; object-fit: contain;" />
     </div>
   </div>
 
   <div class="section">
     <h2 style="color: #ff7300; font-size: 28px;">Incident SLA Compliance</h2>
-    <div class = "sla-stats">
-      <div class ="sla-metric">
+    <div class="sla-stats">
+      <div class="sla-metric">
         <h3>{{slaPerformanceStats.Resolution.percentage}}%</h3>
         <p>Resolution ({{slaPerformanceStats.Resolution.fraction}})</p>
       </div>
-      <div class ="sla-metric">
+      <div class="sla-metric">
         <h3>{{slaPerformanceStats.Workaround.percentage}}%</h3>
         <p>Workaround ({{slaPerformanceStats.Workaround.fraction}})</p>
       </div>
-      <div class ="sla-metric">
+      <div class="sla-metric">
         <h3>{{slaPerformanceStats.Response.percentage}}%</h3>
         <p>Response ({{slaPerformanceStats.Response.fraction}})</p>
       </div>
     </div>
-  </div> 
+  </div>
 
   <div class="sub-topic-page">
     <h1>Engagement</h1>
     <hr class="section-divider" />
-    </div>
-    <div class="section">
-      <h2>Engagements</h2>
+  </div>
+  <div class="section">
+    <h2>Engagements</h2>
     <table>
       <thead>
         <tr>
@@ -436,23 +458,23 @@
           <th>Case</th>
           <th>Description</th>
           <th>Type</th>
-          <th>Updated</th>  
+          <th>Updated</th>
         </tr>
       </thead>
       <tbody>
         {{#each engagementRecords}}
-          <tr>
-            <td>{{opened}}</td>
-            <td>{{caseNumber}}</td>
-            <td>{{description}}</td>
-            <td>{{engagementType}}</td>
-            <td>{{updated}}</td>
-          </tr>
+        <tr>
+          <td>{{opened}}</td>
+          <td>{{caseNumber}}</td>
+          <td>{{description}}</td>
+          <td>{{engagementType}}</td>
+          <td>{{updated}}</td>
+        </tr>
         {{/each}}
       </tbody>
     </table>
   </div>
-  
+
   <!-- SLA Info -->
   <div class="sub-topic-page">
     <h1>SLA & Other Information</h1>
@@ -480,7 +502,7 @@
       </tbody>
     </table>
   </div>
- 
+
   <!-- Thank Page -->
   <div class="thank-page">
     <h1>Thanks!</h1>
@@ -488,4 +510,5 @@
   </div>
 
 </body>
+
 </html>
