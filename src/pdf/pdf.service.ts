@@ -3,25 +3,43 @@ import puppeteer from 'puppeteer';
 import * as path from 'path';
 import * as fs from 'fs';
 import Handlebars from 'handlebars';
-import { generateLineChart, generatePieChart, generateGroupedBarChart} from './Utils/chart.util';
-import { csReportData,CaseRecordDetail,ProjectDeployment } from './types'; 
+import {
+  generateLineChart,
+  generatePieChart,
+  generateGroupedBarChart,
+} from './Utils/chart.util';
+import { csReportData, CaseRecordDetail, ProjectDeployment } from './types';
 
 @Injectable()
 export class PdfService {
   //Main method to generate the Customer Success PDF report
   async generateCsReport(data: csReportData): Promise<string> {
     try {
-      const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
-      const page = await browser.newPage();  
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox'],
+      });
+      const page = await browser.newPage();
       const template = this.loadTemplate();
       const logoDataUri = this.loadLogo();
       const charts = await this.generateCharts(data);
-      const productCoreDetails = this.productCoreSummaries(data.projectDeployments);
+      const productCoreDetails = this.productCoreSummaries(
+        data.projectDeployments,
+      );
       const engagementData = this.filterEngagementCases(data.casesRecords);
-      const uniqueProducts = this.getUniqueProductNames(data.projectDeployments);
+      const uniqueProducts = this.getUniqueProductNames(
+        data.projectDeployments,
+      );
 
       // Prepare HTML context and render using Handlebars
-      const context = this.prepareContext(data, charts, productCoreDetails, logoDataUri,engagementData,uniqueProducts);
+      const context = this.prepareContext(
+        data,
+        charts,
+        productCoreDetails,
+        logoDataUri,
+        engagementData,
+        uniqueProducts,
+      );
       const renderedHtml = template(context);
 
       // Set page content and generate PDF
@@ -34,7 +52,10 @@ export class PdfService {
       });
 
       await browser.close();
-      return this.savePdf(Buffer.from(pdfBuffer), data.subscriptionDetails.projectKey);
+      return this.savePdf(
+        Buffer.from(pdfBuffer),
+        data.subscriptionDetails.projectKey,
+      );
     } catch (err) {
       console.error('Error generating CS Report:', err);
       throw err;
@@ -49,13 +70,18 @@ export class PdfService {
 
   // Load the logo image and convert it to a base64 data URI
   private loadLogo(): string {
-    const logoImagePath = path.join(__dirname, '../../src/pdf/images/wso2-logo-orange.png');
+    const logoImagePath = path.join(
+      __dirname,
+      '../../src/pdf/images/wso2-logo-orange.png',
+    );
     const logoBase64 = fs.readFileSync(logoImagePath, { encoding: 'base64' });
     return `data:image/png;base64,${logoBase64}`;
   }
 
   // Generate product core summaries of the products
-  private productCoreSummaries(deployments: ProjectDeployment[]): { label: string; value: string }[]{
+  private productCoreSummaries(
+    deployments: ProjectDeployment[],
+  ): { label: string; value: string }[] {
     const summaries: { label: string; value: string }[] = [];
     for (const env of deployments || []) {
       for (const p of env.products || []) {
@@ -66,22 +92,26 @@ export class PdfService {
     }
     return summaries;
   }
-  
+
   // Get unique product names from deployments
-  private getUniqueProductNames(deployments: ProjectDeployment[] = []): string[] {
-  const productSet = new Set<string>();
-  for (const env of deployments) {
-    for (const product of env.products || []) {
-      if (product.name) {
-        productSet.add(product.name);
+  private getUniqueProductNames(
+    deployments: ProjectDeployment[] = [],
+  ): string[] {
+    const productSet = new Set<string>();
+    for (const env of deployments) {
+      for (const product of env.products || []) {
+        if (product.name) {
+          productSet.add(product.name);
+        }
       }
     }
+    return productSet.size > 0 ? Array.from(productSet) : ['N/A'];
   }
-  return productSet.size > 0 ? Array.from(productSet) : ['N/A'];
- }
 
   // Generate charts for the report
-  private async generateCharts(data: csReportData): Promise<Record<string, string>> {
+  private async generateCharts(
+    data: csReportData,
+  ): Promise<Record<string, string>> {
     const [
       lineChartImage,
       createdVsResolvedChart,
@@ -105,7 +135,9 @@ export class PdfService {
     };
   }
 
-  private async generateCreatedVsResolvedChart(records: CaseRecordDetail[]): Promise<string> {
+  private async generateCreatedVsResolvedChart(
+    records: CaseRecordDetail[],
+  ): Promise<string> {
     const counts = new Map<string, { Open: number; Closed: number }>();
     for (const record of records || []) {
       const day = record.opened?.split(' ')[0];
@@ -116,16 +148,23 @@ export class PdfService {
       if (state === 'Closed') counts.get(day)!.Closed++;
     }
     const days = Array.from(counts.keys()).sort();
-    const opened = days.map(d => counts.get(d)?.Open ?? 0);
-    const resolved = days.map(d => counts.get(d)?.Closed ?? 0);
+    const opened = days.map((d) => counts.get(d)?.Open ?? 0);
+    const resolved = days.map((d) => counts.get(d)?.Closed ?? 0);
 
-    return generateGroupedBarChart(days, [
-      { label: 'Opened', data: opened },
-      { label: 'Resolved', data: resolved },
-    ], 'Created vs Resolved Cases', { chartType: 'state' });
+    return generateGroupedBarChart(
+      days,
+      [
+        { label: 'Opened', data: opened },
+        { label: 'Resolved', data: resolved },
+      ],
+      'Created vs Resolved Cases',
+      { chartType: 'state' },
+    );
   }
 
-  private async generateCasesByEnvironmentChart(records: CaseRecordDetail[]): Promise<string>{
+  private async generateCasesByEnvironmentChart(
+    records: CaseRecordDetail[],
+  ): Promise<string> {
     const envCounts: Record<string, number> = {};
     for (const record of records || []) {
       const deployment = record.deployment;
@@ -136,58 +175,94 @@ export class PdfService {
     return generatePieChart(Object.keys(envCounts), Object.values(envCounts));
   }
 
-  private async generateCreatedByProductChart(records: CaseRecordDetail[]): Promise<string> {
+  private async generateCreatedByProductChart(
+    records: CaseRecordDetail[],
+  ): Promise<string> {
     const monthMap: Record<string, Record<string, number>> = {};
     for (const r of records || []) {
       const date = new Date(r.opened);
       const product = r.productName;
       if (!product || product === 'N/A') continue;
-      const month = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+      const month = date.toLocaleString('default', {
+        month: 'short',
+        year: 'numeric',
+      });
       monthMap[month] = monthMap[month] || {};
       monthMap[month][product] = (monthMap[month][product] || 0) + 1;
     }
-    const months = Object.keys(monthMap).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-    const allProducts = Array.from(new Set(months.flatMap(m => Object.keys(monthMap[m]))));
+    const months = Object.keys(monthMap).sort(
+      (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+    );
+    const allProducts = Array.from(
+      new Set(months.flatMap((m) => Object.keys(monthMap[m]))),
+    );
 
-    const productSeries = allProducts.map(p => ({
+    const productSeries = allProducts.map((p) => ({
       label: p,
-      data: months.map(m => monthMap[m]?.[p] || 0),
+      data: months.map((m) => monthMap[m]?.[p] || 0),
     }));
 
-    return generateGroupedBarChart(months, productSeries, 'Cases Created by Product', { chartType: 'product' });
+    return generateGroupedBarChart(
+      months,
+      productSeries,
+      'Cases Created by Product',
+      { chartType: 'product' },
+    );
   }
 
-  private async generateIncidentByPriorityChart(records: CaseRecordDetail[]): Promise<string> {
+  private async generateIncidentByPriorityChart(
+    records: CaseRecordDetail[],
+  ): Promise<string> {
     const monthMap = new Map<string, Record<string, number>>();
     for (const record of records || []) {
       const rawDate = record.opened?.split(' ')[0];
       const priority = record.casePriority;
       if (!rawDate || !priority || priority === 'N/A') continue;
       const date = new Date(rawDate);
-      const month = date.toLocaleString('default', { month: 'short', year: 'numeric' }).replace(' ', '/');
+      const month = date
+        .toLocaleString('default', { month: 'short', year: 'numeric' })
+        .replace(' ', '/');
       if (!monthMap.has(month)) monthMap.set(month, {});
       const monthData = monthMap.get(month)!;
       monthData[priority] = (monthData[priority] || 0) + 1;
     }
-    const months = Array.from(monthMap.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-    const priorities = Array.from(new Set(Array.from(monthMap.values()).flatMap(m => Object.keys(m))));
-    const prioritySeries = priorities.map(p => ({
+    const months = Array.from(monthMap.keys()).sort(
+      (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+    );
+    const priorities = Array.from(
+      new Set(Array.from(monthMap.values()).flatMap((m) => Object.keys(m))),
+    );
+    const prioritySeries = priorities.map((p) => ({
       label: p,
-      data: months.map(m => monthMap.get(m)?.[p] || 0),
+      data: months.map((m) => monthMap.get(m)?.[p] || 0),
     }));
-    return generateGroupedBarChart(months, prioritySeries, 'Incident Created by Priority (Monthly)', { chartType: 'priority' });
+    return generateGroupedBarChart(
+      months,
+      prioritySeries,
+      'Incident Created by Priority (Monthly)',
+      { chartType: 'priority' },
+    );
   }
 
   // Filter engagement cases from the case records
-  private filterEngagementCases(records: CaseRecordDetail[] = []): CaseRecordDetail[] {
-  return records.filter((record) => record.caseType === 'Engagement');
-}
+  private filterEngagementCases(
+    records: CaseRecordDetail[] = [],
+  ): CaseRecordDetail[] {
+    return records.filter((record) => record.caseType === 'Engagement');
+  }
 
-// Prepare the context for the Handlebars template
-  private prepareContext(data: csReportData, charts: Record<string, string>, productSummaries: any[], logo: string,engagementData : any[],uniqueProducts: string[]) {
+  // Prepare the context for the Handlebars template
+  private prepareContext(
+    data: csReportData,
+    charts: Record<string, string>,
+    productSummaries: any[],
+    logo: string,
+    engagementData: any[],
+    uniqueProducts: string[],
+  ) {
     return {
       subscriptionDetails: data.subscriptionDetails,
-      slaRecords : data?.slaDetails?.slaRecords || [],
+      slaRecords: data?.slaDetails?.slaRecords || [],
       engagementRecords: engagementData,
       projectDeployments: data?.projectDeployments || {},
       lineChartImage: charts.lineChartImage,
